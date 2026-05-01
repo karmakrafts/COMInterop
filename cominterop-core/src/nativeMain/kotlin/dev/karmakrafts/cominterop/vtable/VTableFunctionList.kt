@@ -18,15 +18,34 @@ package dev.karmakrafts.cominterop.vtable
 
 import kotlinx.cinterop.ExperimentalForeignApi
 
+/**
+ * Mutable builder for ordered v-table function names.
+ */
 @ExperimentalForeignApi
 class VTableFunctionList @PublishedApi internal constructor(
     private val stubPrefix: String, @PublishedApi internal val delegate: ArrayList<String> = ArrayList()
 ) {
     companion object {
+        /**
+         * Builds a function-name list using a mutable DSL receiver.
+         *
+         * [stubPrefix] is prepended to auto-generated stub names.
+         *
+         * @param stubPrefix Prefix to include in generated stub names.
+         * @param block Builder block that mutates the list.
+         * @return Immutable list of function names in insertion order.
+         */
         inline fun build(stubPrefix: String = "", block: VTableFunctionList.() -> Unit): List<String> {
             return VTableFunctionList(stubPrefix).apply(block).delegate
         }
 
+        /**
+         * Builds a function-name list and derives the stub prefix from [T]'s simple class name.
+         *
+         * @param T Type whose simple class name is used as stub prefix.
+         * @param block Builder block that mutates the list.
+         * @return Immutable list of function names in insertion order.
+         */
         inline fun <reified T : Any> buildFor(block: VTableFunctionList.() -> Unit): List<String> {
             val prefix = requireNotNull(T::class.simpleName) {
                 "Could not obtain stub function prefix for ${T::class}"
@@ -43,14 +62,30 @@ class VTableFunctionList @PublishedApi internal constructor(
         return "__${stubPrefix}stub${stubIndex++}"
     }
 
+    /**
+     * Appends [count] auto-generated stub function names.
+     *
+     * @param count Number of stub entries to append.
+     */
     fun addStubs(count: Int) {
         for (index in 0..<count) delegate += getNextStubName()
     }
 
+    /**
+     * Appends [precedingStubs] generated stubs followed by the concrete function [name].
+     *
+     * @param name Concrete function name to append.
+     * @param precedingStubs Number of generated stubs to append before [name].
+     */
     fun add(name: String, precedingStubs: Int = 0) {
         addStubs(precedingStubs)
         delegate += name
     }
 
+    /**
+     * Appends all [names] in order.
+     *
+     * @param names Function names to append in their iteration order.
+     */
     fun addAll(names: Collection<String>) = names.forEach(::add)
 }

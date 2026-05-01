@@ -27,17 +27,28 @@ import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.value
 import kotlin.native.internal.NativePtr
 
+/**
+ * Native wrapper structure that stores a COM object's v-table pointer and Kotlin self-reference.
+ *
+ * @param rawPtr Native pointer to the backing memory of this C struct.
+ */
 @ExperimentalForeignApi
 class VTableData(rawPtr: NativePtr) : CStructVar(rawPtr) {
     @Suppress("DEPRECATION")
     companion object : Type(sizeOf<CPointerVar<*>>() * 2, alignOf<CPointerVar<*>>())
 
+    /**
+     * Pointer to the underlying COM v-table.
+     */
     var vTable: COpaquePointer?
         get() = memberAt<COpaquePointerVar>(0).value
         set(value) {
             memberAt<COpaquePointerVar>(0).value = value
         }
 
+    /**
+     * Stable self-reference used to recover the Kotlin instance from native callbacks.
+     */
     var selfRef: COpaquePointer?
         get() = memberAt<COpaquePointerVar>(sizeOf<CPointerVar<*>>()).value
         set(value) {

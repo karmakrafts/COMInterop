@@ -17,7 +17,7 @@
 package dev.karmakrafts.cominterop.winrt
 
 import dev.karmakrafts.cominterop.vtable.VTableStruct
-import dev.karmakrafts.cominterop.vtable.getSelf
+import dev.karmakrafts.cominterop.vtable.getVSelf
 import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.staticCFunction
@@ -30,7 +30,7 @@ class IRoMetaDataLocator(
 ) : VTableStruct(1) {
     init {
         vTable["Locate"] = staticCFunction<COpaquePointer, PCWSTR, COpaquePointer, HRESULT> { self, name, dest ->
-            self.getSelf<IRoMetaDataLocator>().function(name, dest)
+            self.getVSelf<IRoMetaDataLocator>().function(name, dest)
         }
     }
 }

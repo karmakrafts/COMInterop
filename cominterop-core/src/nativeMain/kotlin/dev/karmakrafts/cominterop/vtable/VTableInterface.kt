@@ -26,10 +26,20 @@ import kotlinx.cinterop.get
 import kotlinx.cinterop.reinterpret
 import kotlin.reflect.KProperty
 
+/**
+ * Base wrapper for native COM interface pointers that resolves callable entries from a v-table.
+ *
+ * @param functionCount Total number of function entries expected in this interface v-table.
+ */
 @ExperimentalForeignApi
 abstract class VTableInterface(
     private val functionCount: Int
 ) {
+    /**
+     * Native COM interface pointer (`void**`) backing this wrapper.
+     *
+     * Initialized by [init].
+     */
     lateinit var address: COpaquePointer
         private set
 
@@ -39,14 +49,35 @@ abstract class VTableInterface(
         }
     }
 
+    /**
+     * Lazily created [VTable] wrapper for this interface.
+     */
     protected val vTable: Lazy<VTable> = lazy { VTable(vTableAddress, functionCount) }
 
+    /**
+     * Resolves a v-table function by delegated [property] name.
+     *
+     * @param F Kotlin function signature represented by the resulting C function pointer.
+     * @param thisRef Owning delegated instance (unused).
+     * @param property Delegated property used to determine the function name.
+     * @return Typed C function pointer resolved from [property].
+     */
     protected operator fun <F : Function<*>> Lazy<VTable>.getValue(
         thisRef: Any?, property: KProperty<*>
     ): CPointer<CFunction<F>> = value[property.name]
 
+    /**
+     * Populates [vTable] with the function names used by this interface wrapper.
+     *
+     * @param vTable V-table mapping to populate.
+     */
     protected abstract fun populateVTable(vTable: VTable)
 
+    /**
+     * Initializes this wrapper with a native COM interface [address] and populates its v-table mapping.
+     *
+     * @param address Native COM interface pointer to wrap.
+     */
     fun init(address: COpaquePointer) {
         this.address = address
         populateVTable(vTable.value)

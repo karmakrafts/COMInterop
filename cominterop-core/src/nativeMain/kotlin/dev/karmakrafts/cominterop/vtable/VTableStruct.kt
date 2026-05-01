@@ -35,11 +35,16 @@ import kotlinx.cinterop.sizeOf
  * Base class for COM implementations created from within Kotlin code.
  * Since COM objects are just `void***`, we allocate the v-table as a contiguous block of pointers,
  * and store the base address to that v-table in a pre-allocated sizeof(void*) wrapper structure.
+ *
+ * @param functionCount Total number of function entries to allocate in the v-table.
  */
 @ExperimentalForeignApi
 abstract class VTableStruct(
     functionCount: Int
 ) : AutoCloseable {
+    /**
+     * Stable self-reference used to recover this instance from native callbacks.
+     */
     protected val selfRef: StableRef<VTableStruct> = StableRef.create(this)
 
     protected val vTableAddress: COpaquePointer = requireNotNull(
@@ -52,14 +57,27 @@ abstract class VTableStruct(
         "Could not allocate memory for COM implementation v-table"
     }
 
+    /**
+     * Structure containing the object address exposed to native callers.
+     */
     val data: VTableData = nativeHeap.alloc {
         vTable = vTableAddress
         selfRef = this@VTableStruct.selfRef.asCPointer()
     }
 
+    /**
+     * Mutable v-table used to assign implementation function pointers.
+     */
     protected val vTable: VTable = VTable(vTableAddress, functionCount)
+
+    /**
+     * Native pointer address passed to COM consumers.
+     */
     inline val address: COpaquePointer get() = data.ptr
 
+    /**
+     * Releases native resources allocated for this structure and its v-table.
+     */
     override fun close() {
         selfRef.dispose()
         nativeHeap.free(vTableAddress)
@@ -67,9 +85,14 @@ abstract class VTableStruct(
     }
 }
 
-// Cannot be an instance function since that would implicitly capture this-ref in staticCFunction
+/**
+ * Resolves the Kotlin-side COM implementation instance from a native COM object pointer.
+ *
+ * @param I Expected [VTableStruct] subtype of the recovered instance.
+ * @return Kotlin instance referenced by the native structure's stable self-reference.
+ */
 @ExperimentalForeignApi
-internal inline fun <reified I : VTableStruct> COpaquePointer.getSelf(): I =
+inline fun <reified I : VTableStruct> COpaquePointer.getVSelf(): I =
     requireNotNull(reinterpret<VTableData>().pointed.selfRef) {
         "Could not retrieve self reference address"
     }.asStableRef<I>().get()

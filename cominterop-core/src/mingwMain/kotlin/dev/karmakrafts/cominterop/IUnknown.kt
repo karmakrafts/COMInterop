@@ -17,7 +17,7 @@
 package dev.karmakrafts.cominterop
 
 import dev.karmakrafts.cominterop.vtable.VTableStruct
-import dev.karmakrafts.cominterop.vtable.getSelf
+import dev.karmakrafts.cominterop.vtable.getVSelf
 import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.COpaquePointerVar
 import kotlinx.cinterop.CPointer
@@ -57,13 +57,13 @@ abstract class IUnknownImpl(
 
     init { // COM objects use static trampolines since we can't directly turn a closure into a C function
         vTable["QueryInterface"] = staticCFunction<COpaquePointer, CPointer<IID>, CPointer<COpaquePointerVar>, HRESULT> { self, iid, ppvObject ->
-            self.getSelf<IUnknownImpl>().queryInterface(self, iid, ppvObject)
+            self.getVSelf<IUnknownImpl>().queryInterface(self, iid, ppvObject)
         }
         vTable["AddRef"] = staticCFunction<COpaquePointer, ULONG> { self ->
-            self.getSelf<IUnknownImpl>().addRef(self)
+            self.getVSelf<IUnknownImpl>().addRef(self)
         }
         vTable["Release"] = staticCFunction<COpaquePointer, ULONG> { self ->
-            self.getSelf<IUnknownImpl>().release(self)
+            self.getVSelf<IUnknownImpl>().release(self)
         }
     }
 
