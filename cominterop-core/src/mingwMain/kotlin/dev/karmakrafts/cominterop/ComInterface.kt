@@ -78,6 +78,6 @@ abstract class ComInterface<T : ComInterfaceType>( // @formatter:off
 
 @ExperimentalForeignApi
 @Suppress("UNCHECKED_CAST")
-internal fun <I : ComInterface<T>, T : ComInterfaceType> CPointer<*>.asCom(iface: T): I {
+fun <I : ComInterface<T>, T : ComInterfaceType> CPointer<*>.asCom(iface: T): I {
     return (iface.create() as I).apply { init(this@asCom) }
 }
