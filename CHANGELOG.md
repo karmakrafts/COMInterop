@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+### Changed
+
+- Added documentation to all relevant public API
+- Make `CPointer<*>.asRt` extension function part of the public API
+
 ## [1.0.2]
 
 ### Changed
