@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.1.0]
+
 ### Changed
 
 - Added documentation to all relevant public API
