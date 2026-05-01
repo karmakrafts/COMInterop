@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.0.2]
+
 ### Changed
 
 - Make `CPointer<*>.asCom` extension function part of the public API
