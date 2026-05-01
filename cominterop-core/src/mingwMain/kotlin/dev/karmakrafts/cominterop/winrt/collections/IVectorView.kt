@@ -37,6 +37,9 @@ import platform.posix.uint32_tVar
 import platform.windows.HRESULT
 import platform.windows.S_OK
 
+/**
+ * [IVectorView on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.ivectorview-1?view=winrt-26100)
+ */
 @ExperimentalForeignApi
 class IVectorView(
     typeArgs: List<RtType>

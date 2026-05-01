@@ -26,6 +26,9 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.posix.IID
 
+/**
+ * [IPropertySet on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.ipropertyset?view=winrt-26100)
+ */
 @ExperimentalForeignApi
 class IPropertySet : RtInterface<Companion>(Companion, emptyList()) {
     companion object : RtInterfaceType {

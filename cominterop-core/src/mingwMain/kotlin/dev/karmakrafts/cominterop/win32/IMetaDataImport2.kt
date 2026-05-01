@@ -37,6 +37,9 @@ import platform.windows.S_OK
 import platform.windows.ULONG
 import platform.windows.ULONGVar
 
+/**
+ * [IMetaDataImport2 on MSDN](https://learn.microsoft.com/en-us/windows/win32/api/rometadataapi/nn-rometadataapi-imetadataimport2)
+ */
 @ExperimentalForeignApi
 class IMetaDataImport2 : ComInterface<IMetaDataImport2.Companion>(Companion) {
     private typealias _EnumGenericParams = (self: COpaquePointer, phEnum: CPointer<HCORENUMVar>, tk: MdToken, rGenericParams: CPointer<MdGenericParamVar>, cMax: ULONG, pcGenericParams: CPointer<ULONGVar>) -> HRESULT

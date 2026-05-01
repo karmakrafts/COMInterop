@@ -35,6 +35,9 @@ import kotlinx.cinterop.value
 import platform.windows.HRESULT
 import platform.windows.S_OK
 
+/**
+ * [IIterable on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.iiterable-1?view=winrt-26100)
+ */
 @ExperimentalForeignApi
 class IIterable(
     typeArgs: List<RtType>

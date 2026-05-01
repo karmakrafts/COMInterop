@@ -30,6 +30,9 @@ import platform.posix.uint32_tVar
 import platform.windows.HRESULT
 import platform.windows.booleanVar
 
+/**
+ * [IIterator on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.iiterator-1?view=winrt-26100)
+ */
 @ExperimentalForeignApi
 class IIterator(
     typeArgs: List<RtType>

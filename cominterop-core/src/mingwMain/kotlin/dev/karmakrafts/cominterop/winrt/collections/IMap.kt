@@ -34,6 +34,9 @@ import platform.windows.HRESULT
 import platform.windows.S_OK
 import platform.windows.booleanVar
 
+/**
+ * [IMap on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.imap-2?view=winrt-26100)
+ */
 @ExperimentalForeignApi
 class IMap(typeArgs: List<RtType>) : RtInterface<IMap.Companion>(Companion, typeArgs) {
     private typealias _GetSize = (self: COpaquePointer, size: CPointer<uint32_tVar>) -> HRESULT

@@ -51,6 +51,9 @@ import platform.windows.ULONG
 import platform.windows.ULONGVar
 import platform.windows.WCHARVar
 
+/**
+ * [IMetaDataImport on MSDN](https://learn.microsoft.com/en-us/windows/win32/api/rometadataapi/nn-rometadataapi-imetadataimport)
+ */
 @ExperimentalForeignApi
 class IMetaDataImport : ComInterface<IMetaDataImport.Companion>(Companion) {
     private typealias _CloseEnum = (self: COpaquePointer, hEnum: HCORENUM) -> Unit

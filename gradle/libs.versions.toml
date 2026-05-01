@@ -2,7 +2,7 @@
 
 java = "17"
 
-comInterop = "1.0.0"
+comInterop = "1.0.1"
 kotlin = "2.3.21" # https://github.com/JetBrains/kotlin/releases
 dokka = "2.2.0" # https://github.com/Kotlin/dokka/releases
 karmaConventions = "1.16.1" # https://github.com/karmakrafts/karma-conventions/tags

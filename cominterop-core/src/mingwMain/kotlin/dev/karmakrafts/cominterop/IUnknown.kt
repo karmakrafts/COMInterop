@@ -36,6 +36,9 @@ import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.decrementAndFetch
 import kotlin.concurrent.atomics.incrementAndFetch
 
+/**
+ * [IUnknown on MSDN](https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown)
+ */
 @ExperimentalForeignApi
 class IUnknown : ComInterface<IUnknown.Companion>(Companion) {
     companion object : ComInterfaceType {

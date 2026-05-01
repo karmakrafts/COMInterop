@@ -29,6 +29,9 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.invoke
 import platform.windows.HRESULT
 
+/**
+ * [IKeyValuePair on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.ikeyvaluepair-2?view=winrt-26100)
+ */
 @ExperimentalForeignApi
 class IKeyValuePair(typeArgs: List<RtType>) : RtInterface<Companion>(Companion, typeArgs) {
     private typealias _GetKey = (self: COpaquePointer, key: COpaquePointer) -> HRESULT

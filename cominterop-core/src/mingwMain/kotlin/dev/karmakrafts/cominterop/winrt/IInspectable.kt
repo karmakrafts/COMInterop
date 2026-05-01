@@ -38,6 +38,9 @@ import platform.windows.HRESULT
 import platform.windows.S_OK
 import platform.windows.ULONGVar
 
+/**
+ * [IInspectable on MSDN](https://learn.microsoft.com/en-us/windows/win32/api/inspectable/nn-inspectable-iinspectable)
+ */
 @ExperimentalForeignApi
 class IInspectable : RtInterface<IInspectable.Companion>(Companion, emptyList()) {
     private typealias _GetIids = (self: COpaquePointer, iidCount: CPointer<ULONGVar>, iids: CPointer<CPointerVar<IID>>) -> HRESULT
