@@ -69,15 +69,52 @@ class IDispatch : ComInterface<IDispatch.Companion>(Companion) {
     private val GetTypeInfoCount: CPointer<CFunction<_GetTypeInfoCount>> by vTable
     private val Invoke: CPointer<CFunction<_Invoke>> by vTable
 
+    /**
+     * Maps one or more member names to their corresponding dispatch IDs.
+     *
+     * @param riid Reserved and expected to be `IID_NULL` for this call.
+     * @param rgszNames Pointer to the array of names to resolve.
+     * @param cNames Number of names in [rgszNames].
+     * @param lcid Locale identifier used for name resolution.
+     * @param rgDispId Output buffer receiving dispatch IDs for each input name.
+     * @return A COM `HRESULT` indicating success or failure.
+     */
     fun getIDsOfNames(
         riid: IID, rgszNames: CPointer<LPOLESTRVar>, cNames: UINT, lcid: LCID, rgDispId: CPointer<DISPIDVar>
     ): HRESULT = GetIDsOfNames(address, riid, rgszNames, cNames, lcid, rgDispId)
 
+    /**
+     * Retrieves type information for this dispatch interface.
+     *
+     * @param iTInfo Type information index. Usually `0` for `IDispatch` implementations with a single type info.
+     * @param lcid Locale identifier for the requested type information.
+     * @param ppTInfo Output pointer that receives an `ITypeInfo` interface pointer.
+     * @return A COM `HRESULT` indicating success or failure.
+     */
     fun getTypeInfo(iTInfo: UINT, lcid: LCID, ppTInfo: CPointer<COpaquePointerVar>): HRESULT =
         GetTypeInfo(address, iTInfo, lcid, ppTInfo)
 
+    /**
+     * Returns how many type information interfaces are provided by this dispatch object.
+     *
+     * @param pctinfo Output pointer receiving the number of available type information interfaces.
+     * @return A COM `HRESULT` indicating success or failure.
+     */
     fun getTypeInfoCount(pctinfo: CPointer<UINTVar>): HRESULT = GetTypeInfoCount(address, pctinfo)
 
+    /**
+     * Invokes a method or property on the dispatch object.
+     *
+     * @param dispIdMember Dispatch ID of the member to invoke.
+     * @param riid Reserved and expected to be `IID_NULL` for this call.
+     * @param lcid Locale identifier for argument and member interpretation.
+     * @param wFlags Invocation flags describing method/property operation.
+     * @param pDispParams Pointer to argument and named-argument descriptors.
+     * @param pVarResult Output buffer for the return value.
+     * @param pExcepInfo Output structure receiving extended exception information on failure.
+     * @param puArgErr Output pointer receiving the index of the first argument with an error.
+     * @return A COM `HRESULT` indicating success or failure.
+     */
     operator fun invoke(
         dispIdMember: DISPID,
         riid: IID,

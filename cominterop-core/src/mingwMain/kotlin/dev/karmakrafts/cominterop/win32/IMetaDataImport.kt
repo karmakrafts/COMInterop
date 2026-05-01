@@ -77,6 +77,13 @@ class IMetaDataImport : ComInterface<IMetaDataImport.Companion>(Companion) {
         }
     }
 
+    /**
+     * Type definition metadata extracted via [getTypeDefProps].
+     *
+     * @property flags Raw metadata flags for the type definition.
+     * @property typeName UTF-16 type name converted to a Kotlin [String].
+     * @property extends Metadata token describing the base type.
+     */
     data class Props(
         val flags: DWORD, val typeName: String, val extends: MdToken
     )
@@ -86,8 +93,20 @@ class IMetaDataImport : ComInterface<IMetaDataImport.Companion>(Companion) {
     private val GetTypeDefProps: CPointer<CFunction<_GetTypeDefProps>> by vTable
     private val GetCustomAttributeByName: CPointer<CFunction<_GetCustomAttributeByName>> by vTable
 
+    /**
+     * Closes an active metadata enumeration handle.
+     *
+     * @param hEnum Enumeration handle previously returned by metadata enumeration APIs.
+     */
     fun closeEnum(hEnum: HCORENUM) = CloseEnum(address, hEnum)
 
+    /**
+     * Finds a type definition token by fully qualified type name.
+     *
+     * @param typeName UTF-16 type name to search for.
+     * @param enclosingClass Enclosing class token, or [MDTOKEN_NIL] if not nested.
+     * @return The matching type definition token, or `null` if not found.
+     */
     fun findTypeDefByName(typeName: String, enclosingClass: MdToken): MdTypeDef? = memScoped {
         val typeDef = alloc<MdTypeDefVar>()
         if (FindTypeDefByName(address, typeName.wcstr.ptr, enclosingClass, typeDef.ptr) != S_OK) {
@@ -96,6 +115,12 @@ class IMetaDataImport : ComInterface<IMetaDataImport.Companion>(Companion) {
         typeDef.value
     }
 
+    /**
+     * Reads core properties of a type definition.
+     *
+     * @param typeDef Type definition token to inspect.
+     * @return Parsed [Props], or `null` if the metadata call fails.
+     */
     fun getTypeDefProps(typeDef: MdTypeDef): Props? = memScoped {
         val nameBuffer = allocArray<WCHARVar>(512)
         val nameLength = alloc<UINT32Var>()
@@ -108,6 +133,13 @@ class IMetaDataImport : ComInterface<IMetaDataImport.Companion>(Companion) {
         Props(flags.value, nameBuffer.toKStringFromUtf16(), extends.value)
     }
 
+    /**
+     * Retrieves the raw blob of a custom attribute by name.
+     *
+     * @param typeDef Type or member metadata token that owns the attribute.
+     * @param name UTF-16 attribute type name.
+     * @return Attribute blob bytes, or `null` when the attribute cannot be found/read.
+     */
     fun getCustomAttributeByName(typeDef: MdTypeDef, name: String): UByteArray? = memScoped {
         val blob = alloc<CPointerVar<UByteVar>>()
         val blobSize = alloc<ULONGVar>()

@@ -61,6 +61,16 @@ class IMetaDataImport2 : ComInterface<IMetaDataImport2.Companion>(Companion) {
 
     private val EnumGenericParams: CPointer<CFunction<_EnumGenericParams>> by vTable
 
+    /**
+     * Enumerates generic parameter tokens for a metadata item.
+     *
+     * The method repeatedly calls the native enumerator in fixed-size batches until
+     * no more entries are reported.
+     *
+     * @param hEnum Enumeration state handle used and advanced by the metadata API.
+     * @param token Metadata token whose generic parameters should be enumerated.
+     * @return A list of generic parameter tokens in enumeration order.
+     */
     fun enumGenericParams(hEnum: CPointer<HCORENUMVar>, token: MdToken): List<MdGenericParam> = memScoped {
         val params = ArrayList<MdGenericParam>()
         // Use a sliding window iterator approach to gather all parameters
