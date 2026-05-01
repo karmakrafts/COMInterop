@@ -32,12 +32,36 @@ import platform.windows.DWORD
 import platform.windows.LPVOIDVar
 import platform.windows.S_OK
 
+/**
+ * Descriptor for a COM class that can expose and instantiate a default COM interface.
+ *
+ * @param I The [ComInterfaceType] describing the class' default interface.
+ * @property defaultInterface The interface descriptor used to create and initialize interface wrappers.
+ */
 @ExperimentalForeignApi
 interface ComClass<I : ComInterfaceType> {
+    /**
+     * The interface descriptor used by this class as its default COM interface.
+     */
     val defaultInterface: I
+
+    /**
+     * Writes this class' COM class identifier (CLSID) into [clsid].
+     *
+     * @param clsid Pointer receiving the CLSID for this COM class.
+     */
     fun getCLSID(clsid: CPointer<CLSID>)
 }
 
+/**
+ * Instantiates this COM class and returns a wrapper for its default interface.
+ *
+ * @param I The concrete [ComInterface] wrapper type to return.
+ * @param T The [ComInterfaceType] implemented by the returned wrapper.
+ * @param C The [ComClass] receiver type providing class metadata.
+ * @param clsContext The COM class context flags forwarded to `CoCreateInstance`.
+ * @return A newly initialized COM interface wrapper.
+ */
 @ExperimentalForeignApi
 @Suppress("UNCHECKED_CAST")
 fun <I : ComInterface<T>, T : ComInterfaceType, C : ComClass<T>> C.new(

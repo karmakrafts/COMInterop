@@ -49,6 +49,11 @@ class IUnknown : ComInterface<IUnknown.Companion>(Companion) {
     }
 }
 
+/**
+ * Extend this if you are implementing a COM class that implements IUnknown.
+ *
+ * [IUnknown on MSDN](https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown)
+ */
 @ExperimentalForeignApi
 abstract class IUnknownImpl(
     functionCount: Int

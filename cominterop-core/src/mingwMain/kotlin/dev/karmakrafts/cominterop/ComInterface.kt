@@ -32,6 +32,12 @@ import platform.posix.IID
 import platform.windows.HRESULT
 import platform.windows.ULONG
 
+/**
+ * Base class for COM interface wrappers backed by a native v-table.
+ *
+ * @param T The concrete [ComInterfaceType] descriptor for this interface.
+ * @property interfaceType The descriptor used to populate and resolve this interface's v-table entries.
+ */
 @ExperimentalForeignApi
 abstract class ComInterface<T : ComInterfaceType>( // @formatter:off
     val interfaceType: T
@@ -53,13 +59,39 @@ abstract class ComInterface<T : ComInterfaceType>( // @formatter:off
         vTable += interfaceType.functions
     }
 
+    /**
+     * Queries this object for another interface identified by [iid].
+     *
+     * @param iid The interface identifier to query.
+     * @param ppvObject Receives the interface pointer when the query succeeds.
+     * @return The resulting COM status code.
+     */
     fun queryInterface(iid: CPointer<IID>, ppvObject: CPointer<COpaquePointerVar>): HRESULT {
         return QueryInterface(address, iid, ppvObject)
     }
 
+    /**
+     * Increments the COM reference count.
+     *
+     * @return The updated reference count.
+     */
     fun addRef(): ULONG = AddRef(address)
+
+    /**
+     * Decrements the COM reference count.
+     *
+     * @return The updated reference count.
+     */
     fun release(): ULONG = Release(address)
 
+    /**
+     * Queries this instance for [type] and wraps it as a new [ComInterface].
+     *
+     * @param I The resulting [ComInterface] subtype.
+     * @param T The [ComInterfaceType] of [type].
+     * @param type The interface type descriptor to query for.
+     * @return A wrapper initialized with the queried interface pointer.
+     */
     @Suppress("UNCHECKED_CAST")
     fun <I : ComInterface<T>, T : ComInterfaceType> asCom(type: T): I = memScoped {
         val iface = type.create() as I
@@ -71,11 +103,22 @@ abstract class ComInterface<T : ComInterfaceType>( // @formatter:off
         iface
     }
 
+    /**
+     * Releases the underlying COM reference held by this wrapper.
+     */
     override fun close() {
         release()
     }
 }
 
+/**
+ * Creates a COM interface wrapper of [iface] from this raw interface pointer.
+ *
+ * @param I The resulting [ComInterface] subtype.
+ * @param T The [ComInterfaceType] of [iface].
+ * @param iface The interface type descriptor used to instantiate the wrapper.
+ * @return A wrapper initialized with this pointer.
+ */
 @ExperimentalForeignApi
 @Suppress("UNCHECKED_CAST")
 fun <I : ComInterface<T>, T : ComInterfaceType> CPointer<*>.asCom(iface: T): I {
