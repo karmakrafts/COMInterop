@@ -22,19 +22,32 @@ import dev.karmakrafts.cominterop.ComRuntime
 import dev.karmakrafts.cominterop.vtable.VTableFunctionList
 import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.COpaquePointer
+import kotlinx.cinterop.COpaquePointerVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.invoke
 import platform.posix.IID
+import platform.windows.DISPID
+import platform.windows.DISPIDVar
+import platform.windows.DISPPARAMS
+import platform.windows.EXCEPINFO
+import platform.windows.HRESULT
+import platform.windows.LCID
+import platform.windows.LPOLESTRVar
+import platform.windows.UINT
+import platform.windows.UINTVar
+import platform.windows.VARIANT
+import platform.windows.WORD
 
 /**
  * [IDispatch on MSDN](https://learn.microsoft.com/en-us/windows/win32/api/oaidl/nn-oaidl-idispatch)
  */
 @ExperimentalForeignApi
 class IDispatch : ComInterface<IDispatch.Companion>(Companion) {
-    private typealias _GetIDsOfNames = (self: COpaquePointer) -> Unit
-    private typealias _GetTypeInfo = (self: COpaquePointer) -> Unit
-    private typealias _GetTypeInfoCount = (self: COpaquePointer) -> Unit
-    private typealias _Invoke = (self: COpaquePointer) -> Unit
+    private typealias _GetIDsOfNames = (self: COpaquePointer, riid: IID, rgszNames: CPointer<LPOLESTRVar>, cNames: UINT, lcid: LCID, rgDispId: CPointer<DISPIDVar>) -> HRESULT
+    private typealias _GetTypeInfo = (self: COpaquePointer, iTInfo: UINT, lcid: LCID, ppTInfo: CPointer<COpaquePointerVar>) -> HRESULT
+    private typealias _GetTypeInfoCount = (self: COpaquePointer, pctinfo: CPointer<UINTVar>) -> HRESULT
+    private typealias _Invoke = (self: COpaquePointer, dispIdMember: DISPID, riid: IID, lcid: LCID, wFlags: WORD, pDispParams: CPointer<DISPPARAMS>, pVarResult: CPointer<VARIANT>, pExcepInfo: CPointer<EXCEPINFO>, puArgErr: CPointer<UINTVar>) -> HRESULT
 
     companion object : ComInterfaceType {
         override val functions: List<String> = VTableFunctionList.build {
@@ -55,4 +68,24 @@ class IDispatch : ComInterface<IDispatch.Companion>(Companion) {
     private val GetTypeInfo: CPointer<CFunction<_GetTypeInfo>> by vTable
     private val GetTypeInfoCount: CPointer<CFunction<_GetTypeInfoCount>> by vTable
     private val Invoke: CPointer<CFunction<_Invoke>> by vTable
+
+    fun getIDsOfNames(
+        riid: IID, rgszNames: CPointer<LPOLESTRVar>, cNames: UINT, lcid: LCID, rgDispId: CPointer<DISPIDVar>
+    ): HRESULT = GetIDsOfNames(address, riid, rgszNames, cNames, lcid, rgDispId)
+
+    fun getTypeInfo(iTInfo: UINT, lcid: LCID, ppTInfo: CPointer<COpaquePointerVar>): HRESULT =
+        GetTypeInfo(address, iTInfo, lcid, ppTInfo)
+
+    fun getTypeInfoCount(pctinfo: CPointer<UINTVar>): HRESULT = GetTypeInfoCount(address, pctinfo)
+
+    operator fun invoke(
+        dispIdMember: DISPID,
+        riid: IID,
+        lcid: LCID,
+        wFlags: WORD,
+        pDispParams: CPointer<DISPPARAMS>,
+        pVarResult: CPointer<VARIANT>,
+        pExcepInfo: CPointer<EXCEPINFO>,
+        puArgErr: CPointer<UINTVar>
+    ): HRESULT = Invoke(address, dispIdMember, riid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr)
 }
