@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.0.1]
+
 ### Added
 
 - Added `IDispatch` interface binding
