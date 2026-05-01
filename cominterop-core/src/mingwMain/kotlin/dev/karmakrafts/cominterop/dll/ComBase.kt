@@ -49,7 +49,7 @@ import platform.windows.UINT32Var
  * This includes most Windows_, Co_ and Ro_ prefixed functions.
  */
 @ExperimentalForeignApi
-object ComBase {
+internal object ComBase {
     private typealias _RoInitialize = (initType: Int) -> HRESULT
     private typealias _RoUninitialize = () -> Unit
     private typealias _RoActivateInstance = (classId: HSTRING, instance: CPointer<COpaquePointerVar>) -> HRESULT

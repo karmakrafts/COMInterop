@@ -31,7 +31,7 @@ import platform.windows.DWORDVar
 import platform.windows.HRESULT
 
 @ExperimentalForeignApi
-object WinTypes {
+internal object WinTypes {
     private typealias _RoParseTypeName = (typeName: HSTRING, partsCount: CPointer<DWORDVar>, typeNameParts: CPointer<CPointerVar<HSTRINGVar>>) -> HRESULT
     private typealias _RoGetMetaDataFile = (name: HSTRING, metaDataDispenser: COpaquePointer?, metaDataFilePath: CPointer<HSTRINGVar>?, metaDataImport: CPointer<COpaquePointerVar>?, typeDefToken: CPointer<MdTypeDefVar>?) -> HRESULT
 
