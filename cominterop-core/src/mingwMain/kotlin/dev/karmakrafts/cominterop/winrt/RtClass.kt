@@ -28,11 +28,27 @@ import kotlinx.cinterop.value
 import platform.posix.IID
 import platform.windows.S_OK
 
+/**
+ * Marker for WinRT activatable class descriptors.
+ */
 @ExperimentalForeignApi
 interface RtClass {
+    /**
+     * Fully qualified WinRT runtime type name.
+     */
     val rtTypeName: String
 }
 
+/**
+ * Activates a WinRT runtime class and returns it as the requested interface wrapper.
+ *
+ * @param I The expected interface wrapper type.
+ * @param C The receiver class descriptor type.
+ * @param T The target WinRT interface type descriptor.
+ * @param type Interface descriptor used to resolve activation and IID.
+ * @param typeArgs Generic type arguments for [type].
+ * @return Activated WinRT interface wrapper.
+ */
 @ExperimentalForeignApi
 @Suppress("UNCHECKED_CAST")
 fun <I : RtInterface<T>, C : RtClass, T : RtInterfaceType> C.activate(type: T, vararg typeArgs: RtType): I = memScoped {

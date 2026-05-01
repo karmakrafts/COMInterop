@@ -24,6 +24,11 @@ import kotlinx.cinterop.staticCFunction
 import platform.windows.HRESULT
 import platform.windows.PCWSTR
 
+/**
+ * VTable-backed delegate used by `RoGetParameterizedTypeInstanceIID` to resolve WinRT metadata.
+ *
+ * @param function Callback receiving a UTF-16 type name pointer and the destination metadata builder pointer.
+ */
 @ExperimentalForeignApi
 class IRoMetaDataLocator(
     private val function: (nameElement: PCWSTR, metaDataDestination: COpaquePointer) -> HRESULT

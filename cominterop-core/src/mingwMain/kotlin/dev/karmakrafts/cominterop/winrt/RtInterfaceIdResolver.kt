@@ -65,6 +65,9 @@ import platform.windows.PCWSTR
 import platform.windows.PCWSTRVar
 import platform.windows.S_OK
 
+/**
+ * Resolves interface identifiers for WinRT type signatures.
+ */
 @ExperimentalForeignApi
 object RtInterfaceIdResolver {
     private const val GUID_ATTRIBUTE_NAME: String = "Windows.Foundation.Metadata.GuidAttribute"
@@ -187,13 +190,19 @@ object RtInterfaceIdResolver {
         else -> "Unknown error"
     }
 
+    /**
+     * Resolves the IID for an instantiated WinRT [type].
+     *
+     * @param type Instantiated WinRT type to resolve.
+     * @param iid Destination pointer receiving the resolved IID.
+     */
     fun resolve(type: RtType, iid: CPointer<IID>) = memScoped {
         val typeName = type.rtTypeName
         val typeParts = parseType(typeName) // Extract generic type we want to resolve
         check(typeParts.isNotEmpty()) { "Malformed WinRT type '$typeName'" }
         val nameElements = ComBase.CoTaskMemAlloc((sizeOf<PCWSTRVar>() * typeParts.size).toULong())
             .reinterpret<PCWSTRVar>()
-        for (i in 0..<typeParts.size) {
+        for (i in typeParts.indices) {
             nameElements[i] = typeParts[i].wcstr.ptr // Allocate parts themselves on the stack
         }
         val result = ComBase.RoGetParameterizedTypeInstanceIID(

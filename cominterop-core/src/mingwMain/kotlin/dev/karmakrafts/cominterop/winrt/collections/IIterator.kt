@@ -32,6 +32,8 @@ import platform.windows.booleanVar
 
 /**
  * [IIterator on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.iiterator-1?view=winrt-26100)
+ *
+ * @param typeArgs Generic type arguments, where the first argument is the element type.
  */
 @ExperimentalForeignApi
 class IIterator(
@@ -56,8 +58,15 @@ class IIterator(
         override fun create(typeArgs: List<RtType>): RtInterface<*> = IIterator(typeArgs)
     }
 
+    /** ABI getter for the current value. */
     val GetCurrent: CPointer<CFunction<_GetCurrent>> by vTable
+
+    /** ABI getter for availability of the current value. */
     val GetHasCurrent: CPointer<CFunction<_GetHasCurrent>> by vTable
+
+    /** ABI method that advances to the next value. */
     val MoveNext: CPointer<CFunction<_MoveNext>> by vTable
+
+    /** ABI bulk-read method. */
     val GetMany: CPointer<CFunction<_GetMany>> by vTable
 }

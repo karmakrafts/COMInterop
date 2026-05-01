@@ -32,6 +32,11 @@ import platform.windows.PCWSTR
 import platform.windows.PCWSTRVar
 import platform.windows.UINT32
 
+/**
+ * Wrapper around the `IRoSimpleMetaDataBuilder` callback interface used by WinRT metadata resolution.
+ *
+ * @param address Native interface address.
+ */
 @ExperimentalForeignApi
 class IRoSimpleMetaDataBuilder(address: COpaquePointer) : VTableInterface(10) {
     private typealias _SetWinRtInterface = (self: COpaquePointer, iid: GUID) -> HRESULT
@@ -55,14 +60,33 @@ class IRoSimpleMetaDataBuilder(address: COpaquePointer) : VTableInterface(10) {
     private val SetStruct: CPointer<CFunction<_SetStruct>> by vTable
     private val SetParametrizedInterface: CPointer<CFunction<_SetParametrizedInterface>> by vTable
 
+    /**
+     * Configures the current metadata entry as a non-generic WinRT interface.
+     *
+     * @param iid Interface identifier to assign.
+     * @return Win32 result code.
+     */
     fun setWinRtInterface(iid: GUID): HRESULT {
         return SetWinRtInterface(address, iid)
     }
 
+    /**
+     * Configures the current metadata entry as a primitive (non-parameterized) structure name.
+     *
+     * @param name Primitive metadata type name.
+     * @return Win32 result code.
+     */
     fun setPrimitive(name: String): HRESULT = memScoped {
         SetStruct(address, name.wcstr.ptr, 0U, null)
     }
 
+    /**
+     * Configures the current metadata entry as a generic WinRT interface.
+     *
+     * @param iid Interface identifier of the generic type definition.
+     * @param numArgs Number of generic arguments.
+     * @return Win32 result code.
+     */
     fun setParametrizedInterface(iid: GUID, numArgs: UINT32): HRESULT {
         return SetParametrizedInterface(address, iid, numArgs)
     }

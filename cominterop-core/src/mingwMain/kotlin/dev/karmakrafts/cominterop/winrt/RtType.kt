@@ -18,13 +18,33 @@ package dev.karmakrafts.cominterop.winrt
 
 import kotlinx.cinterop.ExperimentalForeignApi
 
+/**
+ * Representation of a WinRT type signature component.
+ */
 @ExperimentalForeignApi
 interface RtType {
+    /**
+     * Runtime name used in WinRT metadata signatures.
+     */
     val rtTypeName: String
+
+    /**
+     * Whether this type is fully instantiated.
+     */
     val isInstantiated: Boolean
+
+    /**
+     * Generic arity for open generic type definitions.
+     */
     val arity: Int get() = 0 // Arity is 0 for all default concrete types
 }
 
+/**
+ * Concrete instantiation of a generic WinRT interface type.
+ *
+ * @param type Generic interface type definition.
+ * @param args Concrete generic type arguments.
+ */
 @ExperimentalForeignApi
 data class InstantiatedRtType(
     val type: RtInterfaceType, val args: List<RtType>
@@ -45,20 +65,48 @@ data class InstantiatedRtType(
         }
     }
 
+    /**
+     * ABI function layout inherited from [type].
+     */
     override val functions: List<String> get() = type.functions
+
+    /**
+     * Number of generic arguments bound by this instantiation.
+     */
     override val arity: Int get() = args.size
+
+    /**
+     * Fully rendered WinRT metadata type name.
+     */
     override val rtTypeName: String by lazy { computeNameRecursively(this) }
 
+    /**
+     * Whether all generic arguments are instantiated.
+     */
     override val isInstantiated: Boolean by lazy {
         if (args.isEmpty()) true // If we don't have any type args, the type is considered instantiated
         else args.all(RtType::isInstantiated)
     }
 
+    /**
+     * Creates an interface instance from the wrapped type definition.
+     *
+     * @param typeArgs Generic type arguments passed to [type].
+     * @return Created WinRT interface wrapper.
+     */
     override fun create(typeArgs: List<RtType>): RtInterface<*> = type.create(typeArgs)
 }
 
+/**
+ * Base class for primitive WinRT metadata types.
+ *
+ * @param rtTypeName Runtime metadata name.
+ */
 @ExperimentalForeignApi
 sealed class PrimitiveRtType(override val rtTypeName: String) : RtType {
+    /**
+     * Primitive types are always concrete.
+     */
     override val isInstantiated: Boolean = true
 }
 

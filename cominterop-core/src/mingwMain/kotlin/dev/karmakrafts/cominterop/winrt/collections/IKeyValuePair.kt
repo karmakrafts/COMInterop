@@ -31,6 +31,8 @@ import platform.windows.HRESULT
 
 /**
  * [IKeyValuePair on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.ikeyvaluepair-2?view=winrt-26100)
+ *
+ * @param typeArgs Generic type arguments in key/value order.
  */
 @ExperimentalForeignApi
 class IKeyValuePair(typeArgs: List<RtType>) : RtInterface<Companion>(Companion, typeArgs) {
@@ -52,10 +54,24 @@ class IKeyValuePair(typeArgs: List<RtType>) : RtInterface<Companion>(Companion, 
     private val GetKey: CPointer<CFunction<_GetKey>> by vTable
     private val GetValue: CPointer<CFunction<_GetValue>> by vTable
 
+    /**
+     * Retrieves the key from this pair.
+     *
+     * @param T Native pointed type used for [key].
+     * @param key Destination pointer for the key value.
+     * @return Win32 result code.
+     */
     fun <T : CPointed> getKey(key: CPointer<T>): HRESULT {
         return GetKey(address, key)
     }
 
+    /**
+     * Retrieves the value from this pair.
+     *
+     * @param T Native pointed type used for [value].
+     * @param value Destination pointer for the value.
+     * @return Win32 result code.
+     */
     fun <T : CPointed> getValue(value: CPointer<T>): HRESULT {
         return GetValue(address, value)
     }

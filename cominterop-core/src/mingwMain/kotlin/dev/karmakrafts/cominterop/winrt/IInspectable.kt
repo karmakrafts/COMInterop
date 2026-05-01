@@ -64,6 +64,9 @@ class IInspectable : RtInterface<IInspectable.Companion>(Companion, emptyList())
     private val GetRuntimeClassName: CPointer<CFunction<_GetRuntimeClassName>> by vTable
     private val GetTrustLevel: CPointer<CFunction<_GetTrustLevel>> by vTable
 
+    /**
+     * Runtime class name reported by the underlying object, if available.
+     */
     val runtimeClassName: String?
         get() = memScoped {
             val name = alloc<HSTRINGVar>()
@@ -71,6 +74,11 @@ class IInspectable : RtInterface<IInspectable.Companion>(Companion, emptyList())
             ComRuntime.getString(name.value ?: return@memScoped null)
         }
 
+    /**
+     * Retrieves all interface identifiers implemented by this object.
+     *
+     * @return The list of supported IIDs, or an empty list if retrieval fails.
+     */
     fun getIIds(): List<IID> = memScoped {
         val iids = allocPointerTo<IID>()
         val count = alloc<ULONGVar>()

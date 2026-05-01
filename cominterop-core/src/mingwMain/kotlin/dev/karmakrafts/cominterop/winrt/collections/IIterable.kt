@@ -37,6 +37,8 @@ import platform.windows.S_OK
 
 /**
  * [IIterable on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.iiterable-1?view=winrt-26100)
+ *
+ * @param typeArgs Generic type arguments, where the first argument is the element type.
  */
 @ExperimentalForeignApi
 class IIterable(
@@ -53,6 +55,7 @@ class IIterable(
 
     private val First: CPointer<CFunction<_First>> by vTable
 
+    /** Retrieves the first iterator for this iterable. */
     val first: IIterator
         get() = memScoped {
             val address = alloc<COpaquePointerVar>()

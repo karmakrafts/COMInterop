@@ -26,12 +26,31 @@ import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import platform.posix.IID
 
+/**
+ * Base wrapper for WinRT interfaces.
+ *
+ * @param T Interface descriptor type.
+ * @param interfaceType Interface type descriptor instance.
+ * @param typeArgs Generic type arguments used to instantiate [interfaceType].
+ */
 @ExperimentalForeignApi
 abstract class RtInterface<T : RtInterfaceType>(
     interfaceType: T, typeArgs: List<RtType>
 ) : ComInterface<T>(interfaceType) {
+    /**
+     * Fully instantiated WinRT type represented by this interface instance.
+     */
     val instantiatedType: InstantiatedRtType = interfaceType.instantiate(typeArgs)
 
+    /**
+     * Queries this object for another WinRT interface and wraps it as [I].
+     *
+     * @param I Resulting WinRT interface wrapper type.
+     * @param RT Interface descriptor type for [type].
+     * @param type Target interface descriptor to query.
+     * @param typeArgs Generic type arguments for [type].
+     * @return Queried interface wrapper.
+     */
     @Suppress("UNCHECKED_CAST")
     fun <I : RtInterface<RT>, RT : RtInterfaceType> asRt(type: RT, vararg typeArgs: RtType): I = memScoped {
         check(type.arity == typeArgs.size) { "WinRT type $type requires ${type.arity} type arguments" }
@@ -45,9 +64,18 @@ abstract class RtInterface<T : RtInterfaceType>(
     }
 }
 
+/**
+ * Wraps a raw COM pointer as a WinRT interface.
+ *
+ * @param I Resulting WinRT interface wrapper type.
+ * @param T Interface descriptor type.
+ * @param type Interface descriptor used to instantiate the wrapper.
+ * @param typeArgs Generic type arguments for [type].
+ * @return Wrapped interface instance initialized with this pointer.
+ */
 @ExperimentalForeignApi
 @Suppress("UNCHECKED_CAST")
-internal fun <I : RtInterface<T>, T : RtInterfaceType> CPointer<*>.asRt(type: T, vararg typeArgs: RtType): I {
+fun <I : RtInterface<T>, T : RtInterfaceType> CPointer<*>.asRt(type: T, vararg typeArgs: RtType): I {
     check(type.arity == typeArgs.size) { "WinRT type $type requires ${type.arity} type arguments" }
     return (type.create(typeArgs.toList()) as I).apply { init(this@asRt) }
 }

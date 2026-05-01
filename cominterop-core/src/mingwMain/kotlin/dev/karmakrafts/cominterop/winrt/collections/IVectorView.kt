@@ -39,6 +39,8 @@ import platform.windows.S_OK
 
 /**
  * [IVectorView on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.ivectorview-1?view=winrt-26100)
+ *
+ * @param typeArgs Generic type arguments, where the first argument is the element type.
  */
 @ExperimentalForeignApi
 class IVectorView(
@@ -63,6 +65,7 @@ class IVectorView(
     private val GetAt: CPointer<CFunction<_GetAt>> by vTable
     private val GetSize: CPointer<CFunction<_GetSize>> by vTable
 
+    /** Number of elements in this vector view. */
     val size: Int
         get() = memScoped {
             val value = alloc<uint32_tVar>()
@@ -70,13 +73,28 @@ class IVectorView(
             value.value.toInt()
         }
 
+    /** Valid index range for this vector view. */
     inline val indices: IntRange
         get() = 0..<size
 
+    /**
+     * Reads the element at [index] into [value].
+     *
+     * @param T Native variable type used by [value].
+     * @param index Element index.
+     * @param value Destination pointer receiving the element.
+     * @return Win32 result code.
+     */
     fun <T : CVariable> getAt(index: Int, value: CPointer<T>): HRESULT {
         return GetAt(address, index.toUInt(), value)
     }
 
+    /**
+     * Creates a lazy sequence of all elements read via `GetAt`.
+     *
+     * @param T Native variable type yielded by the sequence.
+     * @return Lazy sequence of successfully read values.
+     */
     inline fun <reified T : CVariable> asSequence(): Sequence<T> = sequence {
         for (index in indices) memScoped {
             val value = alloc<T>()
@@ -85,6 +103,15 @@ class IVectorView(
         }
     }
 
+    /**
+     * Creates a lazy sequence of WinRT interface wrappers from this vector view.
+     *
+     * @param I Resulting WinRT interface wrapper type.
+     * @param T Interface descriptor type for [type].
+     * @param type Interface descriptor used to wrap each element.
+     * @param typeArgs Generic type arguments for [type].
+     * @return Lazy sequence of wrapped interface instances.
+     */
     fun <I : RtInterface<T>, T : RtInterfaceType> asRtSequence(type: T, vararg typeArgs: RtType): Sequence<I> =
         asSequence<COpaquePointerVar>().mapNotNull { ptr -> ptr.value?.asRt(type, *typeArgs) }
 }

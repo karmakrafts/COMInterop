@@ -36,6 +36,8 @@ import platform.windows.booleanVar
 
 /**
  * [IMap on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.imap-2?view=winrt-26100)
+ *
+ * @param typeArgs Generic type arguments in key/value order.
  */
 @ExperimentalForeignApi
 class IMap(typeArgs: List<RtType>) : RtInterface<IMap.Companion>(Companion, typeArgs) {
@@ -44,7 +46,6 @@ class IMap(typeArgs: List<RtType>) : RtInterface<IMap.Companion>(Companion, type
     private typealias _Insert = (self: COpaquePointer, key: COpaquePointer, value: COpaquePointer, replaced: CPointer<booleanVar>) -> HRESULT
 
     companion object : RtInterfaceType {
-        // Super interfaces are not specified here since we only ever retrieve instances of this through querying
         override val rtTypeName: String = "Windows.Foundation.Collections.IMap"
         override val arity: Int = 2
 
@@ -62,6 +63,7 @@ class IMap(typeArgs: List<RtType>) : RtInterface<IMap.Companion>(Companion, type
     private val Lookup: CPointer<CFunction<_Lookup>> by vTable
     private val Insert: CPointer<CFunction<_Insert>> by vTable
 
+    /** Number of entries in the map, or `-1` if retrieval fails. */
     val size: Int
         get() = memScoped {
             val value = alloc<uint32_tVar>()
@@ -69,13 +71,28 @@ class IMap(typeArgs: List<RtType>) : RtInterface<IMap.Companion>(Companion, type
             value.value.toInt()
         }
 
+    /** Range of map indices based on [size]. */
     inline val indices: IntRange
         get() = 0..<size
 
+    /**
+     * Looks up a value by [key].
+     *
+     * @param key Native key pointer.
+     * @param value Destination pointer receiving the value.
+     * @return `true` when lookup succeeds.
+     */
     fun lookup(key: COpaquePointer, value: COpaquePointer): Boolean {
         return Lookup(address, key, value) == S_OK
     }
 
+    /**
+     * Inserts or replaces a value at [key].
+     *
+     * @param key Native key pointer.
+     * @param value Native value pointer.
+     * @return `true` when insertion succeeds.
+     */
     fun insert(key: COpaquePointer, value: COpaquePointer): Boolean = memScoped {
         val replaced = alloc<booleanVar>()
         return Insert(address, key, value, replaced.ptr) == S_OK
