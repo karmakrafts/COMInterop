@@ -2,10 +2,10 @@
 
 java = "17"
 
-comInterop = "1.1.0"
-kotlin = "2.3.21" # https://github.com/JetBrains/kotlin/releases
+comInterop = "1.2.0"
+kotlin = "2.4.0" # https://github.com/JetBrains/kotlin/releases
 dokka = "2.2.0" # https://github.com/Kotlin/dokka/releases
-karmaConventions = "1.16.1" # https://github.com/karmakrafts/karma-conventions/tags
+karmaConventions = "1.17.0" # https://github.com/karmakrafts/karma-conventions/tags
 gradleNexus = "2.0.0" # https://github.com/gradle-nexus/publish-plugin/releases
 
 [libraries]
