@@ -8,6 +8,8 @@
 [![](https://img.shields.io/badge/2.3.21-blue?logo=kotlin&label=kotlin)](https://kotlinlang.org/)
 [![](https://img.shields.io/badge/documentation-black?logo=kotlin)](https://docs.karmakrafts.dev/cominterop-core)
 
+![](https://img.shields.io/badge/-MinGW-lightgray?logo=kotlin&labelColor=black)
+
 A basic COM runtime for Kotlin/Native based on CInterop.  
 This can be used to interop with WinRT/Windows SDK functionality otherwise only available through Microsoft compiler
 extensions and C++ code.
