@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+### Changed
+
+- Updated to Gradle 9.6.1
+- Updated to Karma Conventions 1.18.3
+
 ## [1.2.0]
 
 ### Changed
