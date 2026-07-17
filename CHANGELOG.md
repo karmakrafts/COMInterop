@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+### Changed
+
+- Updated to Kotlin 2.4.10
+- Updated to Karma Conventions 1.19.0
+
 ## [1.2.1]
 
 ### Changed
