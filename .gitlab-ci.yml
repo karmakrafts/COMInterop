@@ -106,14 +106,19 @@ security:
 
 # ------------------------------ Tests
 
-test:windows:
+test:windows:amd64:
   stage: test
   interruptible: true
   rules:
     - *if-merge-request
     - *if-main
   script:
-    - ./gradlew mingwX64Test
+    - ./gradlew clean mingwX64Test --stacktrace
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - cominterop-core/build/test-results/**/TEST-*.xml
   tags:
     - windows
     - amd64

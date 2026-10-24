@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- Unit tests for basic COM APIs
+
 ### Changed
 
 - Updated to Gradle 9.8.2
