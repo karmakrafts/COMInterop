@@ -37,6 +37,6 @@ typealias HSTRINGVar = CPointerVarOf<HSTRING>
 // Docs state that this is 20 bytes on 32-bits, but if we ever compile for Windows x86, we over-allocate a bit
 @ExperimentalForeignApi
 class HSTRING_HEADER(rawPtr: NativePtr) : CStructVar(rawPtr) {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
     companion object : Type(24L, alignOf<CPointerVar<*>>())
 }

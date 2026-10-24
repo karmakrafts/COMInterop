@@ -34,7 +34,7 @@ import kotlin.native.internal.NativePtr
  */
 @ExperimentalForeignApi
 class VTableData(rawPtr: NativePtr) : CStructVar(rawPtr) {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
     companion object : Type(sizeOf<CPointerVar<*>>() * 2, alignOf<CPointerVar<*>>())
 
     /**
