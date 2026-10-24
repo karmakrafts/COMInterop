@@ -3,6 +3,9 @@
 ### Changed
 
 - Updated to Gradle 9.8.2
+- Updated to Kotlin 2.5.0-Beta2
+- Updated to Dokka 2.3.0-Beta
+- Updated to Karma Conventions 1.23.0.315-SNAPSHOT
 
 ## [1.3.0]
 
