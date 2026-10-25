@@ -43,13 +43,13 @@ import platform.windows.WORD
  * [IDispatch on MSDN](https://learn.microsoft.com/en-us/windows/win32/api/oaidl/nn-oaidl-idispatch)
  */
 @ExperimentalForeignApi
-class IDispatch : ComInterface<IDispatch.Companion>(Companion) {
+public class IDispatch : ComInterface<IDispatch.Companion>(Companion) {
     private typealias _GetIDsOfNames = (self: COpaquePointer, riid: IID, rgszNames: CPointer<LPOLESTRVar>, cNames: UINT, lcid: LCID, rgDispId: CPointer<DISPIDVar>) -> HRESULT
     private typealias _GetTypeInfo = (self: COpaquePointer, iTInfo: UINT, lcid: LCID, ppTInfo: CPointer<COpaquePointerVar>) -> HRESULT
     private typealias _GetTypeInfoCount = (self: COpaquePointer, pctinfo: CPointer<UINTVar>) -> HRESULT
     private typealias _Invoke = (self: COpaquePointer, dispIdMember: DISPID, riid: IID, lcid: LCID, wFlags: WORD, pDispParams: CPointer<DISPPARAMS>, pVarResult: CPointer<VARIANT>, pExcepInfo: CPointer<EXCEPINFO>, puArgErr: CPointer<UINTVar>) -> HRESULT
 
-    companion object : ComInterfaceType {
+    public companion object : ComInterfaceType {
         override val functions: List<String> = VTableFunctionList.build {
             add("GetIDsOfNames")
             add("GetTypeInfo")
@@ -79,7 +79,7 @@ class IDispatch : ComInterface<IDispatch.Companion>(Companion) {
      * @param rgDispId Output buffer receiving dispatch IDs for each input name.
      * @return A COM `HRESULT` indicating success or failure.
      */
-    fun getIDsOfNames(
+    public fun getIDsOfNames(
         riid: IID, rgszNames: CPointer<LPOLESTRVar>, cNames: UINT, lcid: LCID, rgDispId: CPointer<DISPIDVar>
     ): HRESULT = GetIDsOfNames(address, riid, rgszNames, cNames, lcid, rgDispId)
 
@@ -91,7 +91,7 @@ class IDispatch : ComInterface<IDispatch.Companion>(Companion) {
      * @param ppTInfo Output pointer that receives an `ITypeInfo` interface pointer.
      * @return A COM `HRESULT` indicating success or failure.
      */
-    fun getTypeInfo(iTInfo: UINT, lcid: LCID, ppTInfo: CPointer<COpaquePointerVar>): HRESULT =
+    public fun getTypeInfo(iTInfo: UINT, lcid: LCID, ppTInfo: CPointer<COpaquePointerVar>): HRESULT =
         GetTypeInfo(address, iTInfo, lcid, ppTInfo)
 
     /**
@@ -100,7 +100,7 @@ class IDispatch : ComInterface<IDispatch.Companion>(Companion) {
      * @param pctinfo Output pointer receiving the number of available type information interfaces.
      * @return A COM `HRESULT` indicating success or failure.
      */
-    fun getTypeInfoCount(pctinfo: CPointer<UINTVar>): HRESULT = GetTypeInfoCount(address, pctinfo)
+    public fun getTypeInfoCount(pctinfo: CPointer<UINTVar>): HRESULT = GetTypeInfoCount(address, pctinfo)
 
     /**
      * Invokes a method or property on the dispatch object.
@@ -115,7 +115,7 @@ class IDispatch : ComInterface<IDispatch.Companion>(Companion) {
      * @param puArgErr Output pointer receiving the index of the first argument with an error.
      * @return A COM `HRESULT` indicating success or failure.
      */
-    operator fun invoke(
+    public operator fun invoke(
         dispIdMember: DISPID,
         riid: IID,
         lcid: LCID,

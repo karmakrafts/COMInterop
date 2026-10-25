@@ -32,7 +32,7 @@ import kotlin.reflect.KProperty
  * @param functionCount Total number of function entries expected in this interface v-table.
  */
 @ExperimentalForeignApi
-abstract class VTableInterface(
+public abstract class VTableInterface(
     private val functionCount: Int
 ) {
     /**
@@ -40,7 +40,7 @@ abstract class VTableInterface(
      *
      * Initialized by [init].
      */
-    lateinit var address: COpaquePointer
+    public lateinit var address: COpaquePointer
         private set
 
     private val vTableAddress: COpaquePointer by lazy {
@@ -78,7 +78,7 @@ abstract class VTableInterface(
      *
      * @param address Native COM interface pointer to wrap.
      */
-    fun init(address: COpaquePointer) {
+    public fun init(address: COpaquePointer) {
         this.address = address
         populateVTable(vTable.value)
     }

@@ -26,7 +26,7 @@ import platform.posix.IID
  * Type descriptor for WinRT interfaces.
  */
 @ExperimentalForeignApi
-interface RtInterfaceType : ComInterfaceType, RtType {
+public interface RtInterfaceType : ComInterfaceType, RtType {
     /**
      * Super interfaces inherited by WinRT interfaces.
      */
@@ -45,7 +45,7 @@ interface RtInterfaceType : ComInterfaceType, RtType {
      * @param typeArgs Generic type arguments.
      * @return Newly created interface wrapper.
      */
-    fun create(typeArgs: List<RtType>): RtInterface<*>
+    public fun create(typeArgs: List<RtType>): RtInterface<*>
 
     /**
      * Creates a non-generic interface wrapper.
@@ -71,7 +71,7 @@ interface RtInterfaceType : ComInterfaceType, RtType {
      * @param typeArgs Generic type arguments.
      * @return Instantiated WinRT type.
      */
-    fun instantiate(typeArgs: List<RtType>): InstantiatedRtType = InstantiatedRtType(this, typeArgs)
+    public fun instantiate(typeArgs: List<RtType>): InstantiatedRtType = InstantiatedRtType(this, typeArgs)
 
     /**
      * Convenience operator to instantiate this interface type.
@@ -79,5 +79,5 @@ interface RtInterfaceType : ComInterfaceType, RtType {
      * @param typeArgs Generic type arguments.
      * @return Instantiated WinRT type.
      */
-    operator fun get(vararg typeArgs: RtType): InstantiatedRtType = instantiate(typeArgs.toList())
+    public operator fun get(vararg typeArgs: RtType): InstantiatedRtType = instantiate(typeArgs.toList())
 }

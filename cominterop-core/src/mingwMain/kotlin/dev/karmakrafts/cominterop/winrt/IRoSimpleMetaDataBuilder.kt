@@ -38,7 +38,7 @@ import platform.windows.UINT32
  * @param address Native interface address.
  */
 @ExperimentalForeignApi
-class IRoSimpleMetaDataBuilder(address: COpaquePointer) : VTableInterface(10) {
+public class IRoSimpleMetaDataBuilder(address: COpaquePointer) : VTableInterface(10) {
     private typealias _SetWinRtInterface = (self: COpaquePointer, iid: GUID) -> HRESULT
     private typealias _SetStruct = (self: COpaquePointer, name: PCWSTR, numFields: UINT32, fieldTypeNames: CPointer<PCWSTRVar>?) -> HRESULT
     private typealias _SetParametrizedInterface = (self: COpaquePointer, iid: GUID, numArgs: UINT32) -> HRESULT
@@ -66,7 +66,7 @@ class IRoSimpleMetaDataBuilder(address: COpaquePointer) : VTableInterface(10) {
      * @param iid Interface identifier to assign.
      * @return Win32 result code.
      */
-    fun setWinRtInterface(iid: GUID): HRESULT {
+    public fun setWinRtInterface(iid: GUID): HRESULT {
         return SetWinRtInterface(address, iid)
     }
 
@@ -76,7 +76,7 @@ class IRoSimpleMetaDataBuilder(address: COpaquePointer) : VTableInterface(10) {
      * @param name Primitive metadata type name.
      * @return Win32 result code.
      */
-    fun setPrimitive(name: String): HRESULT = memScoped {
+    public fun setPrimitive(name: String): HRESULT = memScoped {
         SetStruct(address, name.wcstr.ptr, 0U, null)
     }
 
@@ -87,7 +87,7 @@ class IRoSimpleMetaDataBuilder(address: COpaquePointer) : VTableInterface(10) {
      * @param numArgs Number of generic arguments.
      * @return Win32 result code.
      */
-    fun setParametrizedInterface(iid: GUID, numArgs: UINT32): HRESULT {
+    public fun setParametrizedInterface(iid: GUID, numArgs: UINT32): HRESULT {
         return SetParametrizedInterface(address, iid, numArgs)
     }
 }

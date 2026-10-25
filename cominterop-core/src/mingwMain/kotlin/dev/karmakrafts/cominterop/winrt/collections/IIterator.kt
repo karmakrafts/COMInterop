@@ -36,7 +36,7 @@ import platform.windows.booleanVar
  * @param typeArgs Generic type arguments, where the first argument is the element type.
  */
 @ExperimentalForeignApi
-class IIterator(
+public class IIterator(
     typeArgs: List<RtType>
 ) : RtInterface<Companion>(Companion, typeArgs) {
     private typealias _GetCurrent = (self: COpaquePointer, current: COpaquePointer) -> HRESULT
@@ -44,7 +44,7 @@ class IIterator(
     private typealias _MoveNext = (self: COpaquePointer, hasCurrent: CPointer<booleanVar>) -> HRESULT
     private typealias _GetMany = (self: COpaquePointer, capacity: uint32_t, value: COpaquePointer, actual: CPointer<uint32_tVar>) -> HRESULT
 
-    companion object : RtInterfaceType {
+    public companion object : RtInterfaceType {
         override val rtTypeName: String = "Windows.Foundation.Collections.IIterator"
         override val arity: Int = 1
 
@@ -59,14 +59,14 @@ class IIterator(
     }
 
     /** ABI getter for the current value. */
-    val GetCurrent: CPointer<CFunction<_GetCurrent>> by vTable
+    public val GetCurrent: CPointer<CFunction<_GetCurrent>> by vTable
 
     /** ABI getter for availability of the current value. */
-    val GetHasCurrent: CPointer<CFunction<_GetHasCurrent>> by vTable
+    public val GetHasCurrent: CPointer<CFunction<_GetHasCurrent>> by vTable
 
     /** ABI method that advances to the next value. */
-    val MoveNext: CPointer<CFunction<_MoveNext>> by vTable
+    public val MoveNext: CPointer<CFunction<_MoveNext>> by vTable
 
     /** ABI bulk-read method. */
-    val GetMany: CPointer<CFunction<_GetMany>> by vTable
+    public val GetMany: CPointer<CFunction<_GetMany>> by vTable
 }

@@ -43,13 +43,13 @@ import platform.windows.S_OK
  * @param typeArgs Generic type arguments, where the first argument is the element type.
  */
 @ExperimentalForeignApi
-class IVectorView(
+public class IVectorView(
     typeArgs: List<RtType>
 ) : RtInterface<IVectorView.Companion>(Companion, typeArgs) {
     private typealias _GetAt = (self: COpaquePointer, index: uint32_t, item: COpaquePointer) -> HRESULT
     private typealias _GetSize = (self: COpaquePointer, size: CPointer<uint32_tVar>) -> HRESULT
 
-    companion object : RtInterfaceType {
+    public companion object : RtInterfaceType {
         override val rtTypeName: String = "Windows.Foundation.Collections.IVectorView"
         override val arity: Int = 1
 
@@ -66,7 +66,7 @@ class IVectorView(
     private val GetSize: CPointer<CFunction<_GetSize>> by vTable
 
     /** Number of elements in this vector view. */
-    val size: Int
+    public val size: Int
         get() = memScoped {
             val value = alloc<uint32_tVar>()
             GetSize(address, value.ptr)
@@ -74,7 +74,7 @@ class IVectorView(
         }
 
     /** Valid index range for this vector view. */
-    inline val indices: IntRange
+    public inline val indices: IntRange
         get() = 0..<size
 
     /**
@@ -85,7 +85,7 @@ class IVectorView(
      * @param value Destination pointer receiving the element.
      * @return Win32 result code.
      */
-    fun <T : CVariable> getAt(index: Int, value: CPointer<T>): HRESULT {
+    public fun <T : CVariable> getAt(index: Int, value: CPointer<T>): HRESULT {
         return GetAt(address, index.toUInt(), value)
     }
 
@@ -95,7 +95,7 @@ class IVectorView(
      * @param T Native variable type yielded by the sequence.
      * @return Lazy sequence of successfully read values.
      */
-    inline fun <reified T : CVariable> asSequence(): Sequence<T> = sequence {
+    public inline fun <reified T : CVariable> asSequence(): Sequence<T> = sequence {
         for (index in indices) memScoped {
             val value = alloc<T>()
             if (getAt(index, value.ptr) != S_OK) continue
@@ -112,6 +112,6 @@ class IVectorView(
      * @param typeArgs Generic type arguments for [type].
      * @return Lazy sequence of wrapped interface instances.
      */
-    fun <I : RtInterface<T>, T : RtInterfaceType> asRtSequence(type: T, vararg typeArgs: RtType): Sequence<I> =
+    public fun <I : RtInterface<T>, T : RtInterfaceType> asRtSequence(type: T, vararg typeArgs: RtType): Sequence<I> =
         asSequence<COpaquePointerVar>().mapNotNull { ptr -> ptr.value?.asRt(type, *typeArgs) }
 }

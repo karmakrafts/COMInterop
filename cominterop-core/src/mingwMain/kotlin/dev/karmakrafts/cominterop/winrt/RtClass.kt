@@ -32,11 +32,11 @@ import platform.windows.S_OK
  * Marker for WinRT activatable class descriptors.
  */
 @ExperimentalForeignApi
-interface RtClass {
+public interface RtClass {
     /**
      * Fully qualified WinRT runtime type name.
      */
-    val rtTypeName: String
+    public val rtTypeName: String
 }
 
 /**
@@ -51,16 +51,17 @@ interface RtClass {
  */
 @ExperimentalForeignApi
 @Suppress("UNCHECKED_CAST")
-fun <I : RtInterface<T>, C : RtClass, T : RtInterfaceType> C.activate(type: T, vararg typeArgs: RtType): I = memScoped {
-    val obj = type.create(typeArgs.toList()) as I
-    val address = alloc<COpaquePointerVar>()
-    val iid = alloc<IID>()
-    type.getIID(iid.ptr, obj)
-    val name = hstring(rtTypeName)
-    if (ComBase.RoGetActivationFactory(name, iid.ptr, address.ptr) != S_OK) {
-        // If RoGetActivationFactory fails, we hope that the default activation provides the right interface
-        ComBase.RoActivateInstance(name, address.ptr)
+public fun <I : RtInterface<T>, C : RtClass, T : RtInterfaceType> C.activate(type: T, vararg typeArgs: RtType): I =
+    memScoped {
+        val obj = type.create(typeArgs.toList()) as I
+        val address = alloc<COpaquePointerVar>()
+        val iid = alloc<IID>()
+        type.getIID(iid.ptr, obj)
+        val name = hstring(rtTypeName)
+        if (ComBase.RoGetActivationFactory(name, iid.ptr, address.ptr) != S_OK) {
+            // If RoGetActivationFactory fails, we hope that the default activation provides the right interface
+            ComBase.RoActivateInstance(name, address.ptr)
+        }
+        obj.init(requireNotNull(address.value) { "Could not activate RT class '$rtTypeName'" })
+        obj
     }
-    obj.init(requireNotNull(address.value) { "Could not activate RT class '$rtTypeName'" })
-    obj
-}

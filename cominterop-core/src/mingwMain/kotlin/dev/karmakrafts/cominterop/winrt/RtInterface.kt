@@ -34,13 +34,13 @@ import platform.posix.IID
  * @param typeArgs Generic type arguments used to instantiate [interfaceType].
  */
 @ExperimentalForeignApi
-abstract class RtInterface<T : RtInterfaceType>(
+public abstract class RtInterface<T : RtInterfaceType>(
     interfaceType: T, typeArgs: List<RtType>
 ) : ComInterface<T>(interfaceType) {
     /**
      * Fully instantiated WinRT type represented by this interface instance.
      */
-    val instantiatedType: InstantiatedRtType = interfaceType.instantiate(typeArgs)
+    public val instantiatedType: InstantiatedRtType = interfaceType.instantiate(typeArgs)
 
     /**
      * Queries this object for another WinRT interface and wraps it as [I].
@@ -52,7 +52,7 @@ abstract class RtInterface<T : RtInterfaceType>(
      * @return Queried interface wrapper.
      */
     @Suppress("UNCHECKED_CAST")
-    fun <I : RtInterface<RT>, RT : RtInterfaceType> asRt(type: RT, vararg typeArgs: RtType): I = memScoped {
+    public fun <I : RtInterface<RT>, RT : RtInterfaceType> asRt(type: RT, vararg typeArgs: RtType): I = memScoped {
         check(type.arity == typeArgs.size) { "WinRT type $type requires ${type.arity} type arguments" }
         val iface = type.create(typeArgs.toList()) as I
         val address = alloc<COpaquePointerVar>()
@@ -75,7 +75,7 @@ abstract class RtInterface<T : RtInterfaceType>(
  */
 @ExperimentalForeignApi
 @Suppress("UNCHECKED_CAST")
-fun <I : RtInterface<T>, T : RtInterfaceType> CPointer<*>.asRt(type: T, vararg typeArgs: RtType): I {
+public fun <I : RtInterface<T>, T : RtInterfaceType> CPointer<*>.asRt(type: T, vararg typeArgs: RtType): I {
     check(type.arity == typeArgs.size) { "WinRT type $type requires ${type.arity} type arguments" }
     return (type.create(typeArgs.toList()) as I).apply { init(this@asRt) }
 }

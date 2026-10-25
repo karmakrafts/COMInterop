@@ -22,21 +22,21 @@ import kotlinx.cinterop.ExperimentalForeignApi
  * Representation of a WinRT type signature component.
  */
 @ExperimentalForeignApi
-interface RtType {
+public interface RtType {
     /**
      * Runtime name used in WinRT metadata signatures.
      */
-    val rtTypeName: String
+    public val rtTypeName: String
 
     /**
      * Whether this type is fully instantiated.
      */
-    val isInstantiated: Boolean
+    public val isInstantiated: Boolean
 
     /**
      * Generic arity for open generic type definitions.
      */
-    val arity: Int get() = 0 // Arity is 0 for all default concrete types
+    public val arity: Int get() = 0 // Arity is 0 for all default concrete types
 }
 
 /**
@@ -46,10 +46,10 @@ interface RtType {
  * @param args Concrete generic type arguments.
  */
 @ExperimentalForeignApi
-data class InstantiatedRtType(
+public data class InstantiatedRtType(
     val type: RtInterfaceType, val args: List<RtType>
 ) : RtInterfaceType, RtType by type {
-    companion object {
+    public companion object {
         private fun computeNameRecursively(type: RtType): String {
             require(type.isInstantiated) { "Type must be instantiated" }
             if (type is InstantiatedRtType) {
@@ -84,8 +84,7 @@ data class InstantiatedRtType(
      * Whether all generic arguments are instantiated.
      */
     override val isInstantiated: Boolean by lazy {
-        if (args.isEmpty()) true // If we don't have any type args, the type is considered instantiated
-        else args.all(RtType::isInstantiated)
+        args.isEmpty() || args.all(RtType::isInstantiated) // If we don't have any type args, the type is considered instantiated
     }
 
     /**
@@ -103,7 +102,7 @@ data class InstantiatedRtType(
  * @param rtTypeName Runtime metadata name.
  */
 @ExperimentalForeignApi
-sealed class PrimitiveRtType(override val rtTypeName: String) : RtType {
+public sealed class PrimitiveRtType(override val rtTypeName: String) : RtType {
     /**
      * Primitive types are always concrete.
      */
@@ -112,37 +111,37 @@ sealed class PrimitiveRtType(override val rtTypeName: String) : RtType {
 
 // All primitive types (and builtin structs) supported out of the box
 @ExperimentalForeignApi
-object RtInt16 : PrimitiveRtType("Int16")
+public object RtInt16 : PrimitiveRtType("Int16")
 
 @ExperimentalForeignApi
-object RtInt32 : PrimitiveRtType("Int32")
+public object RtInt32 : PrimitiveRtType("Int32")
 
 @ExperimentalForeignApi
-object RtInt64 : PrimitiveRtType("Int64")
+public object RtInt64 : PrimitiveRtType("Int64")
 
 @ExperimentalForeignApi
-object RtUInt16 : PrimitiveRtType("UInt16")
+public object RtUInt16 : PrimitiveRtType("UInt16")
 
 @ExperimentalForeignApi
-object RtUInt32 : PrimitiveRtType("UInt32")
+public object RtUInt32 : PrimitiveRtType("UInt32")
 
 @ExperimentalForeignApi
-object RtUInt64 : PrimitiveRtType("UInt64")
+public object RtUInt64 : PrimitiveRtType("UInt64")
 
 @ExperimentalForeignApi
-object RtSingle : PrimitiveRtType("Single")
+public object RtSingle : PrimitiveRtType("Single")
 
 @ExperimentalForeignApi
-object RtDouble : PrimitiveRtType("Double")
+public object RtDouble : PrimitiveRtType("Double")
 
 @ExperimentalForeignApi
-object RtBoolean : PrimitiveRtType("Boolean")
+public object RtBoolean : PrimitiveRtType("Boolean")
 
 @ExperimentalForeignApi
-object RtChar16 : PrimitiveRtType("Char16")
+public object RtChar16 : PrimitiveRtType("Char16")
 
 @ExperimentalForeignApi
-object RtGuid : PrimitiveRtType("Guid")
+public object RtGuid : PrimitiveRtType("Guid")
 
 @ExperimentalForeignApi
-object RtString : PrimitiveRtType("String")
+public object RtString : PrimitiveRtType("String")

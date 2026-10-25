@@ -39,7 +39,7 @@ import kotlinx.cinterop.sizeOf
  * @param functionCount Total number of function entries to allocate in the v-table.
  */
 @ExperimentalForeignApi
-abstract class VTableStruct(
+public abstract class VTableStruct(
     functionCount: Int
 ) : AutoCloseable {
     /**
@@ -60,7 +60,7 @@ abstract class VTableStruct(
     /**
      * Structure containing the object address exposed to native callers.
      */
-    val data: VTableData = nativeHeap.alloc {
+    public val data: VTableData = nativeHeap.alloc {
         vTable = vTableAddress
         selfRef = this@VTableStruct.selfRef.asCPointer()
     }
@@ -73,7 +73,7 @@ abstract class VTableStruct(
     /**
      * Native pointer address passed to COM consumers.
      */
-    inline val address: COpaquePointer get() = data.ptr
+    public inline val address: COpaquePointer get() = data.ptr
 
     /**
      * Releases native resources allocated for this structure and its v-table.
@@ -92,7 +92,7 @@ abstract class VTableStruct(
  * @return Kotlin instance referenced by the native structure's stable self-reference.
  */
 @ExperimentalForeignApi
-inline fun <reified I : VTableStruct> COpaquePointer.getVSelf(): I =
+public inline fun <reified I : VTableStruct> COpaquePointer.getVSelf(): I =
     requireNotNull(reinterpret<VTableData>().pointed.selfRef) {
         "Could not retrieve self reference address"
     }.asStableRef<I>().get()

@@ -40,12 +40,12 @@ import platform.windows.booleanVar
  * @param typeArgs Generic type arguments in key/value order.
  */
 @ExperimentalForeignApi
-class IMap(typeArgs: List<RtType>) : RtInterface<IMap.Companion>(Companion, typeArgs) {
+public class IMap(typeArgs: List<RtType>) : RtInterface<IMap.Companion>(Companion, typeArgs) {
     private typealias _GetSize = (self: COpaquePointer, size: CPointer<uint32_tVar>) -> HRESULT
     private typealias _Lookup = (self: COpaquePointer, key: COpaquePointer, value: COpaquePointer) -> HRESULT
     private typealias _Insert = (self: COpaquePointer, key: COpaquePointer, value: COpaquePointer, replaced: CPointer<booleanVar>) -> HRESULT
 
-    companion object : RtInterfaceType {
+    public companion object : RtInterfaceType {
         override val rtTypeName: String = "Windows.Foundation.Collections.IMap"
         override val arity: Int = 2
 
@@ -64,7 +64,7 @@ class IMap(typeArgs: List<RtType>) : RtInterface<IMap.Companion>(Companion, type
     private val Insert: CPointer<CFunction<_Insert>> by vTable
 
     /** Number of entries in the map, or `-1` if retrieval fails. */
-    val size: Int
+    public val size: Int
         get() = memScoped {
             val value = alloc<uint32_tVar>()
             if (GetSize(address, value.ptr) != S_OK) return@memScoped -1
@@ -72,7 +72,7 @@ class IMap(typeArgs: List<RtType>) : RtInterface<IMap.Companion>(Companion, type
         }
 
     /** Range of map indices based on [size]. */
-    inline val indices: IntRange
+    public inline val indices: IntRange
         get() = 0..<size
 
     /**
@@ -82,7 +82,7 @@ class IMap(typeArgs: List<RtType>) : RtInterface<IMap.Companion>(Companion, type
      * @param value Destination pointer receiving the value.
      * @return `true` when lookup succeeds.
      */
-    fun lookup(key: COpaquePointer, value: COpaquePointer): Boolean {
+    public fun lookup(key: COpaquePointer, value: COpaquePointer): Boolean {
         return Lookup(address, key, value) == S_OK
     }
 
@@ -93,7 +93,7 @@ class IMap(typeArgs: List<RtType>) : RtInterface<IMap.Companion>(Companion, type
      * @param value Native value pointer.
      * @return `true` when insertion succeeds.
      */
-    fun insert(key: COpaquePointer, value: COpaquePointer): Boolean = memScoped {
+    public fun insert(key: COpaquePointer, value: COpaquePointer): Boolean = memScoped {
         val replaced = alloc<booleanVar>()
         return Insert(address, key, value, replaced.ptr) == S_OK
     }

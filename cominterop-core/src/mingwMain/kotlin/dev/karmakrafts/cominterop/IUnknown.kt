@@ -40,12 +40,13 @@ import kotlin.concurrent.atomics.incrementAndFetch
  * [IUnknown on MSDN](https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown)
  */
 @ExperimentalForeignApi
-class IUnknown : ComInterface<IUnknown.Companion>(Companion) {
-    companion object : ComInterfaceType {
+public class IUnknown : ComInterface<IUnknown.Companion>(Companion) {
+    public companion object : ComInterfaceType {
         override val superInterfaces: Array<ComInterfaceType> = emptyArray()
         override val functions: List<String> = listOf("QueryInterface", "AddRef", "Release")
         override fun create(): ComInterface<*> = IUnknown()
-        override fun getIID(iid: CPointer<IID>, iface: ComInterface<*>) = ComRuntime.copy(iid, IID_IUnknown.ptr)
+        public override fun getIID(iid: CPointer<IID>, iface: ComInterface<*>): Unit =
+            ComRuntime.copy(iid, IID_IUnknown.ptr)
     }
 }
 
@@ -55,7 +56,7 @@ class IUnknown : ComInterface<IUnknown.Companion>(Companion) {
  * [IUnknown on MSDN](https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown)
  */
 @ExperimentalForeignApi
-abstract class IUnknownImpl(
+public abstract class IUnknownImpl(
     functionCount: Int
 ) : VTableStruct(functionCount + 3) {
     protected var refCount: AtomicInt = AtomicInt(1)
@@ -72,7 +73,11 @@ abstract class IUnknownImpl(
         }
     }
 
-    open fun queryInterface(self: COpaquePointer, iid: CPointer<IID>, ppvObject: CPointer<COpaquePointerVar>): HRESULT {
+    public open fun queryInterface(
+        self: COpaquePointer,
+        iid: CPointer<IID>,
+        ppvObject: CPointer<COpaquePointerVar>
+    ): HRESULT {
         if (ComRuntime.iidEquals(iid, IID_IUnknown.ptr)) {
             ppvObject.pointed.value = self
             return S_OK
@@ -81,13 +86,13 @@ abstract class IUnknownImpl(
         return E_NOINTERFACE
     }
 
-    open fun addRef(self: COpaquePointer): ULONG {
+    public open fun addRef(self: COpaquePointer): ULONG {
         check(refCount.load() > 0) { "Cannot acquire dead reference to COM implementation" }
         return refCount.incrementAndFetch().toUInt()
     }
 
     @Suppress("DEPRECATION")
-    open fun release(self: COpaquePointer): ULONG {
+    public open fun release(self: COpaquePointer): ULONG {
         check(refCount.load() > 0) { "Cannot release dead reference to COM implementation" }
         val newCount = refCount.decrementAndFetch().toUInt()
         if (newCount == 0U) close()

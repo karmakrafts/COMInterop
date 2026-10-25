@@ -41,12 +41,12 @@ import platform.windows.S_OK
  * @param typeArgs Generic type arguments, where the first argument is the element type.
  */
 @ExperimentalForeignApi
-class IIterable(
+public class IIterable(
     typeArgs: List<RtType>
 ) : RtInterface<Companion>(Companion, typeArgs) {
     private typealias _First = (self: COpaquePointer, first: CPointer<COpaquePointerVar>) -> HRESULT
 
-    companion object : RtInterfaceType {
+    public companion object : RtInterfaceType {
         override val functions: List<String> = VTableFunctionList.buildFor<IIterable> { add("First") }
         override val rtTypeName: String = "Windows.Foundation.Collections.IIterable"
         override val arity: Int = 1
@@ -56,7 +56,7 @@ class IIterable(
     private val First: CPointer<CFunction<_First>> by vTable
 
     /** Retrieves the first iterator for this iterable. */
-    val first: IIterator
+    public val first: IIterator
         get() = memScoped {
             val address = alloc<COpaquePointerVar>()
             check(First(this@IIterable.address, address.ptr) == S_OK) {

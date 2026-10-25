@@ -55,13 +55,13 @@ import platform.windows.WCHARVar
  * [IMetaDataImport on MSDN](https://learn.microsoft.com/en-us/windows/win32/api/rometadataapi/nn-rometadataapi-imetadataimport)
  */
 @ExperimentalForeignApi
-class IMetaDataImport : ComInterface<IMetaDataImport.Companion>(Companion) {
+public class IMetaDataImport : ComInterface<IMetaDataImport.Companion>(Companion) {
     private typealias _CloseEnum = (self: COpaquePointer, hEnum: HCORENUM) -> Unit
     private typealias _FindTypeDefByName = (self: COpaquePointer, szTypeDef: LPCWSTR, tkEnclosingClass: MdToken, ptkTypeDef: CPointer<MdTypeDefVar>) -> HRESULT
     private typealias _GetTypeDefProps = (self: COpaquePointer, tkTypeDef: MdTypeDef, szTypeDef: LPWSTR, cchTypeDef: ULONG, pchTypeDef: CPointer<ULONGVar>, pdwTypeDefFlags: CPointer<DWORDVar>, ptkExtends: CPointer<MdTokenVar>) -> HRESULT
     private typealias _GetCustomAttributeByName = (self: COpaquePointer, tkObj: MdToken, szName: LPCWSTR, ppData: CPointer<CPointerVar<BYTEVar>>, pcbData: CPointer<ULONGVar>) -> HRESULT
 
-    companion object : ComInterfaceType {
+    public companion object : ComInterfaceType {
         override val functions: List<String> = VTableFunctionList.buildFor<IMetaDataImport> {
             add("CloseEnum")
             add("FindTypeDefByName", precedingStubs = 5)
@@ -84,9 +84,11 @@ class IMetaDataImport : ComInterface<IMetaDataImport.Companion>(Companion) {
      * @property typeName UTF-16 type name converted to a Kotlin [String].
      * @property extends Metadata token describing the base type.
      */
-    data class Props(
-        val flags: DWORD, val typeName: String, val extends: MdToken
-    )
+    public data class Props( // @formatter:off
+        val flags: DWORD,
+        val typeName: String,
+        val extends: MdToken
+    ) // @formatter:on
 
     private val CloseEnum: CPointer<CFunction<_CloseEnum>> by vTable
     private val FindTypeDefByName: CPointer<CFunction<_FindTypeDefByName>> by vTable
@@ -98,7 +100,7 @@ class IMetaDataImport : ComInterface<IMetaDataImport.Companion>(Companion) {
      *
      * @param hEnum Enumeration handle previously returned by metadata enumeration APIs.
      */
-    fun closeEnum(hEnum: HCORENUM) = CloseEnum(address, hEnum)
+    public fun closeEnum(hEnum: HCORENUM): Unit = CloseEnum(address, hEnum)
 
     /**
      * Finds a type definition token by fully qualified type name.
@@ -107,7 +109,7 @@ class IMetaDataImport : ComInterface<IMetaDataImport.Companion>(Companion) {
      * @param enclosingClass Enclosing class token, or [MDTOKEN_NIL] if not nested.
      * @return The matching type definition token, or `null` if not found.
      */
-    fun findTypeDefByName(typeName: String, enclosingClass: MdToken): MdTypeDef? = memScoped {
+    public fun findTypeDefByName(typeName: String, enclosingClass: MdToken): MdTypeDef? = memScoped {
         val typeDef = alloc<MdTypeDefVar>()
         if (FindTypeDefByName(address, typeName.wcstr.ptr, enclosingClass, typeDef.ptr) != S_OK) {
             return@memScoped null
@@ -121,7 +123,7 @@ class IMetaDataImport : ComInterface<IMetaDataImport.Companion>(Companion) {
      * @param typeDef Type definition token to inspect.
      * @return Parsed [Props], or `null` if the metadata call fails.
      */
-    fun getTypeDefProps(typeDef: MdTypeDef): Props? = memScoped {
+    public fun getTypeDefProps(typeDef: MdTypeDef): Props? = memScoped {
         val nameBuffer = allocArray<WCHARVar>(512)
         val nameLength = alloc<UINT32Var>()
         val flags = alloc<DWORDVar>()
@@ -140,7 +142,7 @@ class IMetaDataImport : ComInterface<IMetaDataImport.Companion>(Companion) {
      * @param name UTF-16 attribute type name.
      * @return Attribute blob bytes, or `null` when the attribute cannot be found/read.
      */
-    fun getCustomAttributeByName(typeDef: MdTypeDef, name: String): UByteArray? = memScoped {
+    public fun getCustomAttributeByName(typeDef: MdTypeDef, name: String): UByteArray? = memScoped {
         val blob = alloc<CPointerVar<UByteVar>>()
         val blobSize = alloc<ULONGVar>()
         if (GetCustomAttributeByName(

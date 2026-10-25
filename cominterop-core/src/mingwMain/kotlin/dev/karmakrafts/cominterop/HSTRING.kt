@@ -26,17 +26,17 @@ import kotlinx.cinterop.alignOf
 import kotlin.native.internal.NativePtr
 
 @ExperimentalForeignApi
-typealias HSTRING_IMPL = COpaque
+public typealias HSTRING_IMPL = COpaque
 
 @ExperimentalForeignApi
-typealias HSTRING = CPointer<HSTRING_IMPL>
+public typealias HSTRING = CPointer<HSTRING_IMPL>
 
 @ExperimentalForeignApi
-typealias HSTRINGVar = CPointerVarOf<HSTRING>
+public typealias HSTRINGVar = CPointerVarOf<HSTRING>
 
 // Docs state that this is 20 bytes on 32-bits, but if we ever compile for Windows x86, we over-allocate a bit
 @ExperimentalForeignApi
-class HSTRING_HEADER(rawPtr: NativePtr) : CStructVar(rawPtr) {
+public class HSTRING_HEADER(rawPtr: NativePtr) : CStructVar(rawPtr) {
     @Suppress("DEPRECATION", "DEPRECATION_ERROR")
-    companion object : Type(24L, alignOf<CPointerVar<*>>())
+    public companion object : Type(24L, alignOf<CPointerVar<*>>())
 }

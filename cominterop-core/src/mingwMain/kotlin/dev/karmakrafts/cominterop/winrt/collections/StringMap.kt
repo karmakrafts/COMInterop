@@ -23,6 +23,6 @@ import kotlinx.cinterop.ExperimentalForeignApi
  * [StringMap on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.stringmap?view=winrt-26100)
  */
 @ExperimentalForeignApi
-object StringMap : RtClass {
+public object StringMap : RtClass {
     override val rtTypeName: String = "Windows.Foundation.Collections.StringMap"
 }

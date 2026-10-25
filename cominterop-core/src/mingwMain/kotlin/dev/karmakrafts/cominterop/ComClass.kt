@@ -39,18 +39,18 @@ import platform.windows.S_OK
  * @property defaultInterface The interface descriptor used to create and initialize interface wrappers.
  */
 @ExperimentalForeignApi
-interface ComClass<I : ComInterfaceType> {
+public interface ComClass<I : ComInterfaceType> {
     /**
      * The interface descriptor used by this class as its default COM interface.
      */
-    val defaultInterface: I
+    public val defaultInterface: I
 
     /**
      * Writes this class' COM class identifier (CLSID) into [clsid].
      *
      * @param clsid Pointer receiving the CLSID for this COM class.
      */
-    fun getCLSID(clsid: CPointer<CLSID>)
+    public fun getCLSID(clsid: CPointer<CLSID>)
 }
 
 /**
@@ -64,7 +64,7 @@ interface ComClass<I : ComInterfaceType> {
  */
 @ExperimentalForeignApi
 @Suppress("UNCHECKED_CAST")
-fun <I : ComInterface<T>, T : ComInterfaceType, C : ComClass<T>> C.new(
+public fun <I : ComInterface<T>, T : ComInterfaceType, C : ComClass<T>> C.new(
     clsContext: DWORD = CLSCTX_INPROC_SERVER.convert()
 ): I = memScoped {
     val obj = defaultInterface.create() as I

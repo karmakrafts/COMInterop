@@ -33,14 +33,14 @@ import kotlin.native.internal.NativePtr
  * @param rawPtr Native pointer to the backing memory of this C struct.
  */
 @ExperimentalForeignApi
-class VTableData(rawPtr: NativePtr) : CStructVar(rawPtr) {
+public class VTableData(rawPtr: NativePtr) : CStructVar(rawPtr) {
     @Suppress("DEPRECATION", "DEPRECATION_ERROR")
-    companion object : Type(sizeOf<CPointerVar<*>>() * 2, alignOf<CPointerVar<*>>())
+    public companion object : Type(sizeOf<CPointerVar<*>>() * 2, alignOf<CPointerVar<*>>())
 
     /**
      * Pointer to the underlying COM v-table.
      */
-    var vTable: COpaquePointer?
+    public var vTable: COpaquePointer?
         get() = memberAt<COpaquePointerVar>(0).value
         set(value) {
             memberAt<COpaquePointerVar>(0).value = value
@@ -49,7 +49,7 @@ class VTableData(rawPtr: NativePtr) : CStructVar(rawPtr) {
     /**
      * Stable self-reference used to recover the Kotlin instance from native callbacks.
      */
-    var selfRef: COpaquePointer?
+    public var selfRef: COpaquePointer?
         get() = memberAt<COpaquePointerVar>(sizeOf<CPointerVar<*>>()).value
         set(value) {
             memberAt<COpaquePointerVar>(sizeOf<CPointerVar<*>>()).value = value

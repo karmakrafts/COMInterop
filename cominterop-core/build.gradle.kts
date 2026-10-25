@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
-
 import dev.karmakrafts.conventions.configureJava
 import dev.karmakrafts.conventions.dokka.configureDokka
 import dev.karmakrafts.conventions.dokka.withKotlin
 import dev.karmakrafts.conventions.kotlin.defaultCompilerOptions
 import dev.karmakrafts.conventions.setProjectInfo
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
 plugins {
@@ -39,6 +36,7 @@ configureDokka {
 
 kotlin {
     defaultCompilerOptions()
+    explicitApi()
     withSourcesJar()
     mingwX64()
     applyDefaultHierarchyTemplate()

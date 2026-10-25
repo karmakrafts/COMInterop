@@ -19,7 +19,6 @@ import dev.karmakrafts.conventions.apache2License
 import dev.karmakrafts.conventions.defaultDependencyLocking
 import dev.karmakrafts.conventions.setRepository
 import dev.karmakrafts.conventions.signPublications
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 plugins {
     alias(libs.plugins.dokka) apply false
@@ -32,7 +31,7 @@ plugins {
 group = "dev.karmakrafts.cominterop"
 version = GitLabCI.getDefaultVersion(libs.versions.comInterop)
 
-@OptIn(ExperimentalEncodingApi::class) subprojects {
+subprojects {
     apply {
         plugin<MavenPublishPlugin>()
         plugin<SigningPlugin>()

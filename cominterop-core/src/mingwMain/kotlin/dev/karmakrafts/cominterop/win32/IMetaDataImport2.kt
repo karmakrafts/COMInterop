@@ -41,10 +41,10 @@ import platform.windows.ULONGVar
  * [IMetaDataImport2 on MSDN](https://learn.microsoft.com/en-us/windows/win32/api/rometadataapi/nn-rometadataapi-imetadataimport2)
  */
 @ExperimentalForeignApi
-class IMetaDataImport2 : ComInterface<IMetaDataImport2.Companion>(Companion) {
+public class IMetaDataImport2 : ComInterface<IMetaDataImport2.Companion>(Companion) {
     private typealias _EnumGenericParams = (self: COpaquePointer, phEnum: CPointer<HCORENUMVar>, tk: MdToken, rGenericParams: CPointer<MdGenericParamVar>, cMax: ULONG, pcGenericParams: CPointer<ULONGVar>) -> HRESULT
 
-    companion object : ComInterfaceType {
+    public companion object : ComInterfaceType {
         override val superInterfaces: Array<ComInterfaceType> = arrayOf(IMetaDataImport)
 
         override val functions: List<String> = VTableFunctionList.buildFor<IMetaDataImport2> {
@@ -71,7 +71,7 @@ class IMetaDataImport2 : ComInterface<IMetaDataImport2.Companion>(Companion) {
      * @param token Metadata token whose generic parameters should be enumerated.
      * @return A list of generic parameter tokens in enumeration order.
      */
-    fun enumGenericParams(hEnum: CPointer<HCORENUMVar>, token: MdToken): List<MdGenericParam> = memScoped {
+    public fun enumGenericParams(hEnum: CPointer<HCORENUMVar>, token: MdToken): List<MdGenericParam> = memScoped {
         val params = ArrayList<MdGenericParam>()
         // Use a sliding window iterator approach to gather all parameters
         val genericParams = allocArray<MdGenericParamVar>(16)

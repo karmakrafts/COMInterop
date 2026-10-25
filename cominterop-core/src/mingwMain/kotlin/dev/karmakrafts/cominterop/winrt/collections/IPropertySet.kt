@@ -30,8 +30,8 @@ import platform.posix.IID
  * [IPropertySet on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.ipropertyset?view=winrt-26100)
  */
 @ExperimentalForeignApi
-class IPropertySet : RtInterface<Companion>(Companion, emptyList()) {
-    companion object : RtInterfaceType {
+public class IPropertySet : RtInterface<Companion>(Companion, emptyList()) {
+    public companion object : RtInterfaceType {
         override val rtTypeName: String = "Windows.Foundation.Collections.IPropertySet"
         override val functions: List<String> = emptyList()
         override val isInstantiated: Boolean = true

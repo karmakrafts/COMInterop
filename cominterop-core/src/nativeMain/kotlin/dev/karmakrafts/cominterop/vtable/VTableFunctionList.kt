@@ -22,10 +22,10 @@ import kotlinx.cinterop.ExperimentalForeignApi
  * Mutable builder for ordered v-table function names.
  */
 @ExperimentalForeignApi
-class VTableFunctionList @PublishedApi internal constructor(
+public class VTableFunctionList @PublishedApi internal constructor(
     private val stubPrefix: String, @PublishedApi internal val delegate: ArrayList<String> = ArrayList()
 ) {
-    companion object {
+    public companion object {
         /**
          * Builds a function-name list using a mutable DSL receiver.
          *
@@ -35,7 +35,7 @@ class VTableFunctionList @PublishedApi internal constructor(
          * @param block Builder block that mutates the list.
          * @return Immutable list of function names in insertion order.
          */
-        inline fun build(stubPrefix: String = "", block: VTableFunctionList.() -> Unit): List<String> {
+        public inline fun build(stubPrefix: String = "", block: VTableFunctionList.() -> Unit): List<String> {
             return VTableFunctionList(stubPrefix).apply(block).delegate
         }
 
@@ -46,7 +46,7 @@ class VTableFunctionList @PublishedApi internal constructor(
          * @param block Builder block that mutates the list.
          * @return Immutable list of function names in insertion order.
          */
-        inline fun <reified T : Any> buildFor(block: VTableFunctionList.() -> Unit): List<String> {
+        public inline fun <reified T : Any> buildFor(block: VTableFunctionList.() -> Unit): List<String> {
             val prefix = requireNotNull(T::class.simpleName) {
                 "Could not obtain stub function prefix for ${T::class}"
             }
@@ -67,7 +67,7 @@ class VTableFunctionList @PublishedApi internal constructor(
      *
      * @param count Number of stub entries to append.
      */
-    fun addStubs(count: Int) {
+    public fun addStubs(count: Int) {
         for (index in 0..<count) delegate += getNextStubName()
     }
 
@@ -77,7 +77,7 @@ class VTableFunctionList @PublishedApi internal constructor(
      * @param name Concrete function name to append.
      * @param precedingStubs Number of generated stubs to append before [name].
      */
-    fun add(name: String, precedingStubs: Int = 0) {
+    public fun add(name: String, precedingStubs: Int = 0) {
         addStubs(precedingStubs)
         delegate += name
     }
@@ -87,5 +87,5 @@ class VTableFunctionList @PublishedApi internal constructor(
      *
      * @param names Function names to append in their iteration order.
      */
-    fun addAll(names: Collection<String>) = names.forEach(::add)
+    public fun addAll(names: Collection<String>): Unit = names.forEach(::add)
 }

@@ -43,11 +43,11 @@ import platform.windows.S_OK
  * Provides helpers for initializing COM/WinRT and working with common runtime types.
  */
 @ExperimentalForeignApi
-object ComRuntime {
+public object ComRuntime {
     /**
      * Initializes COM and WinRT for the current thread in multi-threaded mode.
      */
-    fun init() {
+    public fun init() {
         ComBase.CoInitializeEx(null, COINIT_MULTITHREADED)
         ComBase.RoInitialize(ComBase.RO_INIT_MULTITHREADED)
     }
@@ -55,7 +55,7 @@ object ComRuntime {
     /**
      * Uninitializes COM and WinRT for the current thread.
      */
-    fun uninit() {
+    public fun uninit() {
         ComBase.CoUninitialize()
         ComBase.RoUninitialize()
     }
@@ -66,7 +66,7 @@ object ComRuntime {
      * @param value The UTF-16 string value to allocate as [HSTRING].
      * @return The allocated [HSTRING] handle.
      */
-    fun createString(value: String): HSTRING = memScoped {
+    public fun createString(value: String): HSTRING = memScoped {
         val handle = alloc<HSTRINGVar>()
         check(ComBase.WindowsCreateString(value.wcstr.ptr, value.length.toUInt(), handle.ptr) == S_OK) {
             "Could not allocate HSTRING '$value'"
@@ -79,7 +79,7 @@ object ComRuntime {
      *
      * @param handle The [HSTRING] handle to delete.
      */
-    fun deleteString(handle: HSTRING) = ComBase.WindowsDeleteString(handle)
+    public fun deleteString(handle: HSTRING): Int = ComBase.WindowsDeleteString(handle)
 
     /**
      * Reads the value of an [HSTRING] as a Kotlin [String].
@@ -87,7 +87,7 @@ object ComRuntime {
      * @param handle The [HSTRING] handle to read.
      * @return The decoded UTF-16 string.
      */
-    fun getString(handle: HSTRING): String = ComBase.WindowsGetStringRawBuffer(handle, null).toKStringFromUtf16()
+    public fun getString(handle: HSTRING): String = ComBase.WindowsGetStringRawBuffer(handle, null).toKStringFromUtf16()
 
     /**
      * Parses an IID string and writes it to the given [IID] pointer.
@@ -95,7 +95,7 @@ object ComRuntime {
      * @param value The IID in canonical string format (`{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}`).
      * @param iid The destination pointer receiving the parsed IID value.
      */
-    fun iidFromString(value: String, iid: CPointer<IID>) {
+    public fun iidFromString(value: String, iid: CPointer<IID>) {
         require(value.length == 38) { "Invalid length for IID '$value'" }
         memScoped {
             check(ComBase.IIDFromString(value.wcstr.ptr, iid) == S_OK) {
@@ -111,9 +111,8 @@ object ComRuntime {
      * @param iid2 The second IID pointer.
      * @return `true` if both IIDs have equal binary contents, `false` otherwise.
      */
-    fun iidEquals(iid1: CPointer<IID>, iid2: CPointer<IID>): Boolean {
-        if (iid1 == iid2) return true // If addresses are equal, take short path
-        return memcmp(iid1, iid2, sizeOf<IID>().convert()) == 0
+    public fun iidEquals(iid1: CPointer<IID>, iid2: CPointer<IID>): Boolean {
+        return iid1 == iid2 || memcmp(iid1, iid2, sizeOf<IID>().convert()) == 0 // If addresses are equal, take short path
     }
 
     /**
@@ -123,7 +122,7 @@ object ComRuntime {
      * @param iid2 The IID string in canonical format.
      * @return `true` if both IIDs are equal, `false` otherwise.
      */
-    fun iidEquals(iid1: CPointer<IID>, iid2: String): Boolean = memScoped {
+    public fun iidEquals(iid1: CPointer<IID>, iid2: String): Boolean = memScoped {
         val parsedIid2 = alloc<IID>()
         iidFromString(iid2, parsedIid2.ptr)
         iidEquals(iid1, parsedIid2.ptr)
@@ -135,7 +134,7 @@ object ComRuntime {
      * @param progId The COM ProgID to resolve.
      * @param clsid The destination pointer receiving the resolved CLSID.
      */
-    fun clsidFromProgId(progId: String, clsid: CPointer<CLSID>) {
+    public fun clsidFromProgId(progId: String, clsid: CPointer<CLSID>) {
         memScoped {
             check(ComBase.CLSIDFromProgID(progId.wcstr.ptr, clsid) == S_OK) {
                 "Could not find CLSID for PROGID '$progId'"
@@ -149,7 +148,7 @@ object ComRuntime {
      * @param guid The GUID value to format.
      * @return The canonical GUID string.
      */
-    fun guidToString(guid: GUID): String = memScoped {
+    public fun guidToString(guid: GUID): String = memScoped {
         val ptr = alloc<LPOLESTRVar>()
         ComBase.StringFromCLSID(guid.ptr, ptr.ptr)
         val result = requireNotNull(ptr.value).toKStringFromUtf16()
@@ -164,7 +163,7 @@ object ComRuntime {
      * @param dst The destination pointer.
      * @param src The source pointer.
      */
-    inline fun <reified T : CVariable> copy(dst: CPointer<T>, src: CPointer<T>) {
+    public inline fun <reified T : CVariable> copy(dst: CPointer<T>, src: CPointer<T>) {
         memcpy(dst, src, sizeOf<T>().convert())
     }
 }
@@ -176,7 +175,7 @@ object ComRuntime {
  * @return The temporary [HSTRING] handle valid within this memory scope.
  */
 @ExperimentalForeignApi
-fun MemScope.hstring(value: String): HSTRING {
+public fun MemScope.hstring(value: String): HSTRING {
     val handle = alloc<HSTRINGVar>()
     val header = alloc<HSTRING_HEADER>()
     check(

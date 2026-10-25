@@ -42,12 +42,12 @@ import platform.windows.ULONGVar
  * [IInspectable on MSDN](https://learn.microsoft.com/en-us/windows/win32/api/inspectable/nn-inspectable-iinspectable)
  */
 @ExperimentalForeignApi
-class IInspectable : RtInterface<IInspectable.Companion>(Companion, emptyList()) {
+public class IInspectable : RtInterface<IInspectable.Companion>(Companion, emptyList()) {
     private typealias _GetIids = (self: COpaquePointer, iidCount: CPointer<ULONGVar>, iids: CPointer<CPointerVar<IID>>) -> HRESULT
     private typealias _GetRuntimeClassName = (self: COpaquePointer, className: CPointer<HSTRINGVar>) -> HRESULT
     private typealias _GetTrustLevel = (self: COpaquePointer, level: Int) -> HRESULT
 
-    companion object : RtInterfaceType {
+    public companion object : RtInterfaceType {
         override val superInterfaces: Array<ComInterfaceType> = arrayOf(IUnknown)
         override val functions: List<String> = listOf("GetIids", "GetRuntimeClassName", "GetTrustLevel")
         override val rtTypeName: String = "Object" // IInspectable is projected as Object in the ABI
@@ -67,7 +67,7 @@ class IInspectable : RtInterface<IInspectable.Companion>(Companion, emptyList())
     /**
      * Runtime class name reported by the underlying object, if available.
      */
-    val runtimeClassName: String?
+    public val runtimeClassName: String?
         get() = memScoped {
             val name = alloc<HSTRINGVar>()
             if (GetRuntimeClassName(address, name.ptr) != S_OK) return@memScoped null
@@ -79,7 +79,7 @@ class IInspectable : RtInterface<IInspectable.Companion>(Companion, emptyList())
      *
      * @return The list of supported IIDs, or an empty list if retrieval fails.
      */
-    fun getIIds(): List<IID> = memScoped {
+    public fun getIIds(): List<IID> = memScoped {
         val iids = allocPointerTo<IID>()
         val count = alloc<ULONGVar>()
         if (GetIids(address, count.ptr, iids.ptr) != S_OK) return@memScoped emptyList()

@@ -34,7 +34,7 @@ import kotlin.reflect.KProperty
  * @param functionCount Total number of function slots available in this v-table.
  */
 @ExperimentalForeignApi
-class VTable(
+public class VTable(
     baseAddress: COpaquePointer, private val functionCount: Int
 ) {
     private val entries: CPointer<COpaquePointerVar> = baseAddress.reinterpret()
@@ -47,7 +47,7 @@ class VTable(
      *
      * @param name Function name to register.
      */
-    operator fun plusAssign(name: String) {
+    public operator fun plusAssign(name: String) {
         require(functions.size < functionCount) { "V-table cannot fit additional function '$name'" }
         require(name !in functions) { "V-table already contains function '$name'" }
         functions += name
@@ -58,7 +58,7 @@ class VTable(
      *
      * @param names Function names to register.
      */
-    operator fun plusAssign(names: Collection<String>) {
+    public operator fun plusAssign(names: Collection<String>) {
         names.forEach(::plusAssign)
     }
 
@@ -68,7 +68,7 @@ class VTable(
      * @param name Function name to register.
      * @param address Native function pointer assigned to the function slot.
      */
-    operator fun set(name: String, address: COpaquePointer) {
+    public operator fun set(name: String, address: COpaquePointer) {
         require(functions.size < functionCount) { "V-table cannot fit additional function '$name'" }
         require(name !in functions) { "V-table already contains function '$name'" }
         entries[functions.size] = address
@@ -81,7 +81,7 @@ class VTable(
      * @param name Registered function name to resolve.
      * @return Native function pointer stored in the slot of [name].
      */
-    fun getAddress(name: String): COpaquePointer {
+    public fun getAddress(name: String): COpaquePointer {
         require(name in functions) { "No function named '$name' in v-table" }
         val index = functions.indexOf(name)
         return requireNotNull(entries[index]) {
@@ -96,7 +96,7 @@ class VTable(
      * @param name Registered function name to resolve.
      * @return Typed C function pointer for [name].
      */
-    operator fun <F : Function<*>> get(name: String): CPointer<CFunction<F>> = getAddress(name).reinterpret()
+    public operator fun <F : Function<*>> get(name: String): CPointer<CFunction<F>> = getAddress(name).reinterpret()
 
     /**
      * Property delegate variant of [get] that resolves by [property] name.
@@ -106,6 +106,6 @@ class VTable(
      * @param property Delegated property used to determine the function name.
      * @return Typed C function pointer resolved from [property].
      */
-    operator fun <F : Function<*>> getValue(thisRef: Any?, property: KProperty<*>): CPointer<CFunction<F>> =
+    public operator fun <F : Function<*>> getValue(thisRef: Any?, property: KProperty<*>): CPointer<CFunction<F>> =
         get(property.name)
 }

@@ -23,6 +23,6 @@ import kotlinx.cinterop.ExperimentalForeignApi
  * [PropertySet on MSDN](https://learn.microsoft.com/en-us/uwp/api/windows.foundation.collections.propertyset?view=winrt-26100)
  */
 @ExperimentalForeignApi
-object PropertySet : RtClass {
+public object PropertySet : RtClass {
     override val rtTypeName: String = "Windows.Foundation.Collections.PropertySet"
 }

@@ -35,11 +35,11 @@ import platform.windows.HRESULT
  * @param typeArgs Generic type arguments in key/value order.
  */
 @ExperimentalForeignApi
-class IKeyValuePair(typeArgs: List<RtType>) : RtInterface<Companion>(Companion, typeArgs) {
+public class IKeyValuePair(typeArgs: List<RtType>) : RtInterface<Companion>(Companion, typeArgs) {
     private typealias _GetKey = (self: COpaquePointer, key: COpaquePointer) -> HRESULT
     private typealias _GetValue = (self: COpaquePointer, value: COpaquePointer) -> HRESULT
 
-    companion object : RtInterfaceType {
+    public companion object : RtInterfaceType {
         override val rtTypeName: String = "Windows.Foundation.Collections.IKeyValuePair"
         override val arity: Int = 2
 
@@ -61,7 +61,7 @@ class IKeyValuePair(typeArgs: List<RtType>) : RtInterface<Companion>(Companion, 
      * @param key Destination pointer for the key value.
      * @return Win32 result code.
      */
-    fun <T : CPointed> getKey(key: CPointer<T>): HRESULT {
+    public fun <T : CPointed> getKey(key: CPointer<T>): HRESULT {
         return GetKey(address, key)
     }
 
@@ -72,7 +72,7 @@ class IKeyValuePair(typeArgs: List<RtType>) : RtInterface<Companion>(Companion, 
      * @param value Destination pointer for the value.
      * @return Win32 result code.
      */
-    fun <T : CPointed> getValue(value: CPointer<T>): HRESULT {
+    public fun <T : CPointed> getValue(value: CPointer<T>): HRESULT {
         return GetValue(address, value)
     }
 }

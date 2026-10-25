@@ -39,8 +39,8 @@ import platform.windows.ULONG
  * @property interfaceType The descriptor used to populate and resolve this interface's v-table entries.
  */
 @ExperimentalForeignApi
-abstract class ComInterface<T : ComInterfaceType>( // @formatter:off
-    val interfaceType: T
+public abstract class ComInterface<T : ComInterfaceType>( // @formatter:off
+    public val interfaceType: T
 ) : VTableInterface(interfaceType.getTotalFunctionCount()), AutoCloseable { // @formatter:on
     private typealias _QueryInterface = (self: COpaquePointer, iid: CPointer<IID>, ppvObject: CPointer<COpaquePointerVar>) -> HRESULT
     private typealias _AddRef = (self: COpaquePointer) -> ULONG
@@ -66,7 +66,7 @@ abstract class ComInterface<T : ComInterfaceType>( // @formatter:off
      * @param ppvObject Receives the interface pointer when the query succeeds.
      * @return The resulting COM status code.
      */
-    fun queryInterface(iid: CPointer<IID>, ppvObject: CPointer<COpaquePointerVar>): HRESULT {
+    public fun queryInterface(iid: CPointer<IID>, ppvObject: CPointer<COpaquePointerVar>): HRESULT {
         return QueryInterface(address, iid, ppvObject)
     }
 
@@ -75,14 +75,14 @@ abstract class ComInterface<T : ComInterfaceType>( // @formatter:off
      *
      * @return The updated reference count.
      */
-    fun addRef(): ULONG = AddRef(address)
+    public fun addRef(): ULONG = AddRef(address)
 
     /**
      * Decrements the COM reference count.
      *
      * @return The updated reference count.
      */
-    fun release(): ULONG = Release(address)
+    public fun release(): ULONG = Release(address)
 
     /**
      * Queries this instance for [type] and wraps it as a new [ComInterface].
@@ -93,7 +93,7 @@ abstract class ComInterface<T : ComInterfaceType>( // @formatter:off
      * @return A wrapper initialized with the queried interface pointer.
      */
     @Suppress("UNCHECKED_CAST")
-    fun <I : ComInterface<T>, T : ComInterfaceType> asCom(type: T): I = memScoped {
+    public fun <I : ComInterface<T>, T : ComInterfaceType> asCom(type: T): I = memScoped {
         val iface = type.create() as I
         val address = alloc<COpaquePointerVar>()
         val iid = alloc<IID>()
@@ -121,6 +121,6 @@ abstract class ComInterface<T : ComInterfaceType>( // @formatter:off
  */
 @ExperimentalForeignApi
 @Suppress("UNCHECKED_CAST")
-fun <I : ComInterface<T>, T : ComInterfaceType> CPointer<*>.asCom(iface: T): I {
+public fun <I : ComInterface<T>, T : ComInterfaceType> CPointer<*>.asCom(iface: T): I {
     return (iface.create() as I).apply { init(this@asCom) }
 }

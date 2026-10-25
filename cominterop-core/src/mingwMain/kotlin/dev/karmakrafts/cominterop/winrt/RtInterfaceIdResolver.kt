@@ -69,7 +69,7 @@ import platform.windows.S_OK
  * Resolves interface identifiers for WinRT type signatures.
  */
 @ExperimentalForeignApi
-object RtInterfaceIdResolver {
+public object RtInterfaceIdResolver {
     private const val GUID_ATTRIBUTE_NAME: String = "Windows.Foundation.Metadata.GuidAttribute"
 
     private val builtinTypes: Set<String> = listOf( // @formatter:off
@@ -196,7 +196,7 @@ object RtInterfaceIdResolver {
      * @param type Instantiated WinRT type to resolve.
      * @param iid Destination pointer receiving the resolved IID.
      */
-    fun resolve(type: RtType, iid: CPointer<IID>) = memScoped {
+    public fun resolve(type: RtType, iid: CPointer<IID>): Unit = memScoped {
         val typeName = type.rtTypeName
         val typeParts = parseType(typeName) // Extract generic type we want to resolve
         check(typeParts.isNotEmpty()) { "Malformed WinRT type '$typeName'" }

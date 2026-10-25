@@ -24,33 +24,33 @@ import platform.posix.IID
  * Describes metadata and factory behavior for a COM interface type.
  */
 @ExperimentalForeignApi
-interface ComInterfaceType {
+public interface ComInterfaceType {
     /**
      * Direct parent interfaces of this interface type.
      *
      * Defaults to [IUnknown].
      */
-    val superInterfaces: Array<ComInterfaceType> get() = arrayOf(IUnknown)
+    public val superInterfaces: Array<ComInterfaceType> get() = arrayOf(IUnknown)
 
     /**
      * Ordered list of function names defined by this interface type.
      */
-    val functions: List<String>
+    public val functions: List<String>
 
     /**
      * Creates a new [ComInterface] wrapper instance for this interface type.
      */
-    fun create(): ComInterface<*>
+    public fun create(): ComInterface<*>
 
     /**
      * Writes this interface type's IID into [iid] for the provided [iface].
      */
-    fun getIID(iid: CPointer<IID>, iface: ComInterface<*>)
+    public fun getIID(iid: CPointer<IID>, iface: ComInterface<*>)
 
     /**
      * Returns all transitive super interfaces in declaration order.
      */
-    fun allSuperInterfaces(): List<ComInterfaceType> {
+    public fun allSuperInterfaces(): List<ComInterfaceType> {
         val queue = ArrayDeque<ComInterfaceType>()
         queue += superInterfaces
         val visited = ArrayList<ComInterfaceType>()
@@ -66,5 +66,6 @@ interface ComInterfaceType {
     /**
      * Returns the total number of functions including all inherited interface functions.
      */
-    fun getTotalFunctionCount(): Int = functions.size + allSuperInterfaces().sumOf { iface -> iface.functions.size }
+    public fun getTotalFunctionCount(): Int =
+        functions.size + allSuperInterfaces().sumOf { iface -> iface.functions.size }
 }

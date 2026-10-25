@@ -30,7 +30,7 @@ import platform.windows.PCWSTR
  * @param function Callback receiving a UTF-16 type name pointer and the destination metadata builder pointer.
  */
 @ExperimentalForeignApi
-class IRoMetaDataLocator(
+public class IRoMetaDataLocator(
     private val function: (nameElement: PCWSTR, metaDataDestination: COpaquePointer) -> HRESULT
 ) : VTableStruct(1) {
     init {
