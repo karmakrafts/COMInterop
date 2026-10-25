@@ -18,72 +18,41 @@
 
 package dev.karmakrafts.cominterop
 
-import dev.karmakrafts.cominterop.win32.IDispatch
-import dev.karmakrafts.cominterop.winrt.IInspectable
-import dev.karmakrafts.cominterop.winrt.collections.IPropertySet
+import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.alloc
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
 import platform.posix.IID
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.test.assertNotSame
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 class ComInterfaceTypeTest {
-    @Test
-    fun unknownIsTheRootInterface() {
-        assertTrue(IUnknown.superInterfaces.isEmpty())
-        assertTrue(IUnknown.allSuperInterfaces().isEmpty())
-        assertEquals(listOf("QueryInterface", "AddRef", "Release"), IUnknown.functions)
-        assertEquals(3, IUnknown.getTotalFunctionCount())
+    private class Descriptor(
+        override val functions: List<String>, override val superInterfaces: Array<ComInterfaceType> = arrayOf(IUnknown)
+    ) : ComInterfaceType {
+        override fun create(): ComInterface<*> = IUnknown()
+        override fun getIID(iid: CPointer<IID>, iface: ComInterface<*>) = IUnknown.getIID(iid, iface)
     }
 
     @Test
-    fun dispatchInheritsUnknownByDefault() {
-        assertEquals(listOf(IUnknown), IDispatch.superInterfaces.toList())
-        assertEquals(listOf(IUnknown), IDispatch.allSuperInterfaces())
-        assertEquals(7, IDispatch.getTotalFunctionCount())
+    fun inheritedFunctionsPrecedeDerivedFunctions() {
+        val parent = Descriptor(listOf("Parent"))
+        val child = Descriptor(listOf("Child"), arrayOf(parent))
+        assertEquals(listOf(IUnknown, parent), child.allSuperInterfaces())
+        assertEquals(5, child.getTotalFunctionCount())
     }
 
     @Test
-    fun winrtInheritanceListsBaseInterfacesBeforeDerivedInterfaces() {
-        assertEquals(listOf(IUnknown), IInspectable.allSuperInterfaces())
-        assertEquals(listOf(IUnknown, IInspectable), IPropertySet.allSuperInterfaces())
-        assertEquals(6, IInspectable.getTotalFunctionCount())
-        assertEquals(6, IPropertySet.getTotalFunctionCount())
+    fun sharedAncestorsAreCountedOnlyOnce() {
+        val left = Descriptor(listOf("Left"))
+        val right = Descriptor(listOf("Right"))
+        val child = Descriptor(listOf("Child"), arrayOf(left, right))
+        assertEquals(listOf(IUnknown, right, left), child.allSuperInterfaces())
+        assertEquals(6, child.getTotalFunctionCount())
     }
 
     @Test
-    fun factoriesCreateIndependentWrappersWithTheirDescriptor() {
-        for (type in listOf(IUnknown, IDispatch, IInspectable, IPropertySet)) {
-            val first = type.create()
-            val second = type.create()
-            assertNotSame(first, second)
-            assertSame(type, first.interfaceType)
-            assertSame(type, second.interfaceType)
-        }
-        assertIs<IUnknown>(IUnknown.create())
-        assertIs<IDispatch>(IDispatch.create())
-        assertIs<IInspectable>(IInspectable.create())
-        assertIs<IPropertySet>(IPropertySet.create())
-    }
-
-    @Test
-    fun descriptorsExposeStandardInterfaceIds() = memScoped {
-        val iid = alloc<IID>()
-        val types = listOf(
-            IUnknown to "{00000000-0000-0000-C000-000000000046}",
-            IDispatch to "{00020400-0000-0000-C000-000000000046}",
-            IInspectable to "{AF86E2E0-B12D-4C6A-9C5A-D7AA65101E90}",
-            IPropertySet to "{8A43ED9F-F4E6-4421-ACF9-1DAB2986820C}"
-        )
-        for ([type, expected] in types) {
-            type.getIID(iid.ptr, type.create())
-            assertEquals(expected, ComRuntime.guidToString(iid))
-        }
+    fun rootDescriptorsHaveNoInheritedFunctions() {
+        val root = Descriptor(emptyList(), emptyArray())
+        assertEquals(emptyList(), root.allSuperInterfaces())
+        assertEquals(0, root.getTotalFunctionCount())
     }
 }

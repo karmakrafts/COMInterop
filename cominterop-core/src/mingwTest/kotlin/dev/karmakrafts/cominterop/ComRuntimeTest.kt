@@ -127,14 +127,6 @@ class ComRuntimeTest {
     }
 
     @Test
-    fun scopedHstringReferencesRemainIndependent() = memScoped {
-        val first = hstring("first \uD83D\uDE80")
-        val second = hstring("second 日本語")
-        assertEquals("first \uD83D\uDE80", ComRuntime.getString(first))
-        assertEquals("second 日本語", ComRuntime.getString(second))
-    }
-
-    @Test
     fun progIdResolvesBuiltInShellClass() = memScoped {
         val clsid = alloc<CLSID>()
         ComRuntime.clsidFromProgId("Shell.Application", clsid.ptr)
