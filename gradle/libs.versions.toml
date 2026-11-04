@@ -5,7 +5,7 @@ java = "17"
 comInterop = "1.4.0"
 kotlin = "2.5.0-Beta2" # https://github.com/JetBrains/kotlin/releases
 dokka = "2.3.0-Beta" # https://github.com/Kotlin/dokka/releases
-karmaConventions = "1.23.0.315-SNAPSHOT" # https://github.com/karmakrafts/karma-conventions/tags
+karmaConventions = "1.23.0.317-SNAPSHOT" # https://github.com/karmakrafts/karma-conventions/tags
 
 [libraries]
 
